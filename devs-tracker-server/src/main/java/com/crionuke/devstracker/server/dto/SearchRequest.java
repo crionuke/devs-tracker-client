@@ -1,22 +1,30 @@
 package com.crionuke.devstracker.server.dto;
 
+import java.util.List;
+
 public class SearchRequest {
 
-    private String name;
+    private List<String> countries;
+    private String term;
 
-    SearchRequest() {
+    public String getTerm() {
+        return term;
     }
 
-    public String getName() {
-        return name;
+    public void setTerm(String term) {
+        this.term = term;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public List<String> getCountries() {
+        return countries;
+    }
+
+    public void setCountries(List<String> countries) {
+        this.countries = countries;
     }
 
     @Override
     public String toString() {
-        return SearchRequest.class.getSimpleName() + "(name=\"" + name + "\")";
+        return SearchRequest.class.getSimpleName() + "(countries=\"" + countries + "\", term=\"" + term + "\")";
     }
 }

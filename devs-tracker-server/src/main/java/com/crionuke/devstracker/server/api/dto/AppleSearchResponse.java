@@ -2,12 +2,18 @@ package com.crionuke.devstracker.server.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AppleSearchResponse {
     private int resultCount;
     private List<AppleSearchResult> results;
+
+    public AppleSearchResponse() {
+        resultCount = 0;
+        results = new ArrayList<>();
+    }
 
     public int getResultCount() {
         return resultCount;

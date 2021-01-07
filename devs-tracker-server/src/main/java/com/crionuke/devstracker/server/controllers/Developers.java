@@ -1,7 +1,6 @@
 package com.crionuke.devstracker.server.controllers;
 
 import com.crionuke.devstracker.server.api.AppleSearchApi;
-import com.crionuke.devstracker.server.api.dto.AppleSearchResponse;
 import com.crionuke.devstracker.server.dto.SearchDevelopers;
 import com.crionuke.devstracker.server.dto.SearchRequest;
 import com.crionuke.devstracker.server.dto.SearchResponse;
@@ -11,10 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/devstracker/v1/developers")
@@ -36,20 +34,19 @@ public class Developers {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest searchRequest) {
         if (logger.isInfoEnabled()) {
-            logger.info("SearchRequest request, {}", searchRequest);
+            logger.info("Search developer, {}", searchRequest);
         }
-        try {
-            AppleSearchResponse appleSearchResponse =
-                    appleSearchApi.searchDeveloper(searchRequest.getName(), "us");
-            List<SearchDevelopers> developers = appleSearchResponse.getResults().stream()
-                    .map(r -> new SearchDevelopers(r.getArtistId(), r.getArtistName()))
-                    .distinct()
-                    .collect(Collectors.toList());
-            return new ResponseEntity(new SearchResponse(developers.size(), developers), HttpStatus.OK);
-        } catch (IOException e) {
-            logger.warn(e.getMessage(), e);
-            return new ResponseEntity(new SearchResponse(), HttpStatus.NOT_FOUND);
-        }
+
+        List<SearchDevelopers> developers = appleSearchApi
+                .searchDeveloper(searchRequest.getCountries(), searchRequest.getTerm())
+                .flatMap(response -> Flux.fromIterable(response.getResults()))
+                .map(result -> new SearchDevelopers(result.getArtistId(), result.getArtistName()))
+                .distinct()
+                .take(5)
+                .collectList()
+                .block();
+
+        return new ResponseEntity(new SearchResponse(developers.size(), developers), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{id}/track", produces = MediaType.APPLICATION_JSON_VALUE)

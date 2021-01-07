@@ -3,6 +3,7 @@ package com.crionuke.devstracker.server.dto;
 import java.util.Objects;
 
 public class SearchDevelopers {
+
     private final long id;
     private final String name;
 
