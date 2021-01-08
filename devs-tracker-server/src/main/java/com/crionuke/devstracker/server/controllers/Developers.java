@@ -1,9 +1,9 @@
 package com.crionuke.devstracker.server.controllers;
 
 import com.crionuke.devstracker.server.api.AppleSearchApi;
-import com.crionuke.devstracker.server.dto.SearchDevelopers;
-import com.crionuke.devstracker.server.dto.SearchRequest;
-import com.crionuke.devstracker.server.dto.SearchResponse;
+import com.crionuke.devstracker.server.controllers.dto.SearchDeveloper;
+import com.crionuke.devstracker.server.controllers.dto.SearchRequest;
+import com.crionuke.devstracker.server.controllers.dto.SearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -37,10 +37,10 @@ public class Developers {
             logger.info("Search developer, {}", searchRequest);
         }
 
-        List<SearchDevelopers> developers = appleSearchApi
+        List<SearchDeveloper> developers = appleSearchApi
                 .searchDeveloper(searchRequest.getCountries(), searchRequest.getTerm())
                 .flatMap(response -> Flux.fromIterable(response.getResults()))
-                .map(result -> new SearchDevelopers(result.getArtistId(), result.getArtistName()))
+                .map(result -> new SearchDeveloper(result.getArtistId(), result.getArtistName()))
                 .distinct()
                 .take(5)
                 .collectList()

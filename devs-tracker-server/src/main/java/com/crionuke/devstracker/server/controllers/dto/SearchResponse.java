@@ -1,18 +1,18 @@
-package com.crionuke.devstracker.server.dto;
+package com.crionuke.devstracker.server.controllers.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchResponse {
     private final int count;
-    private final List<SearchDevelopers> developers;
+    private final List<SearchDeveloper> developers;
 
     public SearchResponse() {
         this.count = 0;
         this.developers = new ArrayList<>();
     }
 
-    public SearchResponse(int count, List<SearchDevelopers> developers) {
+    public SearchResponse(int count, List<SearchDeveloper> developers) {
         this.count = count;
         this.developers = developers;
     }
@@ -21,7 +21,7 @@ public class SearchResponse {
         return count;
     }
 
-    public List<SearchDevelopers> getDevelopers() {
+    public List<SearchDeveloper> getDevelopers() {
         return developers;
     }
 }

@@ -1,4 +1,4 @@
-package com.crionuke.devstracker.server.dto;
+package com.crionuke.devstracker.server.controllers.dto;
 
 import java.util.List;
 
