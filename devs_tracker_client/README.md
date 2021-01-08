@@ -1,6 +1,6 @@
 # devs_tracker_client
 
-DEVSTRACKER
+DEVSTRACKER client
 
 ## Getting Started
 

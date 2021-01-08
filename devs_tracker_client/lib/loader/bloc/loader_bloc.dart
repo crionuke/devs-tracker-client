@@ -66,8 +66,8 @@ class LoaderBloc extends Bloc<LoaderEvent, LoaderState> {
 
   @override
   Future<Function> close() {
-    _dbRepositoryStatusSubscription?.cancel();
-    _purchaseRepositoryStatusSubscription?.cancel();
+    _dbRepositoryStatusSubscription.cancel();
+    _purchaseRepositoryStatusSubscription.cancel();
     return super.close();
   }
 }
