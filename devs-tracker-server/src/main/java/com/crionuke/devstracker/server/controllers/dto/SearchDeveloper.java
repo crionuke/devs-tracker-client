@@ -33,4 +33,9 @@ public class SearchDeveloper {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
+    @Override
+    public String toString() {
+        return "\"" + name + "/id" + id + "\"";
+    }
 }

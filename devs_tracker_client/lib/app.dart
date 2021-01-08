@@ -1,16 +1,18 @@
-import 'package:db_repository/db_repository.dart';
-import 'package:devs_tracker_client/home/view/home_page.dart';
-import 'package:devs_tracker_client/loader/bloc/loader_bloc.dart';
-import 'package:devs_tracker_client/loader/loader.dart';
+import 'package:devs_tracker_client/features/home/view/home_page.dart';
+import 'package:devs_tracker_client/features/loader/bloc/loader_bloc.dart';
+import 'package:devs_tracker_client/features/loader/view/loader_page.dart';
+import 'package:devs_tracker_client/repositories/db_repository/db_repository.dart';
+import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:purchase_repository/purchase_repository.dart';
 
 class App extends StatelessWidget {
   final DbRepository dbRepository;
+  final ServerRepository serverRepository;
   final PurchaseRepository purchaseRepository;
 
-  App(this.dbRepository, this.purchaseRepository);
+  App(this.dbRepository, this.purchaseRepository, this.serverRepository);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +24,13 @@ class App extends StatelessWidget {
           RepositoryProvider<PurchaseRepository>(
             create: (context) => purchaseRepository,
           ),
+          RepositoryProvider<ServerRepository>(
+            create: (context) => serverRepository,
+          ),
         ],
         child: BlocProvider(
-          create: (_) => LoaderBloc(dbRepository, purchaseRepository),
+          create: (_) =>
+              LoaderBloc(dbRepository, purchaseRepository, serverRepository),
           child: AppView(),
         ));
   }
@@ -49,7 +55,7 @@ class _AppViewState extends State<AppView> {
             listener: (context, state) {
               if (state is RepositoriesLoaded) {
                 _navigator.pushAndRemoveUntil(
-                    HomePage.route(state), (route) => false);
+                    HomePage.route(), (route) => false);
               }
             },
             child: child);

@@ -7,7 +7,7 @@ class PurchaseRepository {
 
   Stream<PurchaseRepositoryStatus> get status async* {
     yield PurchaseRepositoryStatus.loading;
-    await Future<void>.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 1));
     yield PurchaseRepositoryStatus.loaded;
   }
 

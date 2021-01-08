@@ -32,21 +32,27 @@ public class Developers {
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest searchRequest) {
+    public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest request) {
         if (logger.isInfoEnabled()) {
-            logger.info("Search developer, {}", searchRequest);
+            logger.info("Search request, {}", request);
         }
 
         List<SearchDeveloper> developers = appleSearchApi
-                .searchDeveloper(searchRequest.getCountries(), searchRequest.getTerm())
+                .searchDeveloper(request.getCountries(), request.getTerm())
                 .flatMap(response -> Flux.fromIterable(response.getResults()))
                 .map(result -> new SearchDeveloper(result.getArtistId(), result.getArtistName()))
                 .distinct()
-                .take(5)
+                .take(8)
                 .collectList()
                 .block();
 
-        return new ResponseEntity(new SearchResponse(developers.size(), developers), HttpStatus.OK);
+        SearchResponse response = new SearchResponse(request.getRquid(), developers.size(), developers);
+
+        if (logger.isInfoEnabled()) {
+            logger.info("Search response, {}", response);
+        }
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/{id}/track", produces = MediaType.APPLICATION_JSON_VALUE)
