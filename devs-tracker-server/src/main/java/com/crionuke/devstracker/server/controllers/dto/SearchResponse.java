@@ -3,18 +3,13 @@ package com.crionuke.devstracker.server.controllers.dto;
 import java.util.List;
 
 public class SearchResponse {
-    private final long rquid;
+
     private final int count;
     private final List<SearchDeveloper> developers;
 
-    public SearchResponse(long rquid, int count, List<SearchDeveloper> developers) {
-        this.rquid = rquid;
+    public SearchResponse(int count, List<SearchDeveloper> developers) {
         this.count = count;
         this.developers = developers;
-    }
-
-    public long getRquid() {
-        return rquid;
     }
 
     public int getCount() {
@@ -27,8 +22,7 @@ public class SearchResponse {
 
     @Override
     public String toString() {
-        return SearchRequest.class.getSimpleName() + "(rquid=" + rquid + ", " +
-                "count=\"" + count + "\", " +
+        return getClass().getSimpleName() + "(count=\"" + count + "\", " +
                 "developers=" + developers + ")";
     }
 }

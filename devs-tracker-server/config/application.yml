@@ -1,5 +1,10 @@
 server:
   port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/devstracker
+    username: devstracker
+    password: qwe123
 logging:
   level:
     root: WARN

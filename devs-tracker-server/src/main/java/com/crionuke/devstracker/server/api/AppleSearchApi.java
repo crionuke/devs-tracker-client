@@ -1,7 +1,7 @@
 package com.crionuke.devstracker.server.api;
 
 import com.crionuke.devstracker.server.api.dto.AppleSearchResponse;
-import com.crionuke.devstracker.server.controllers.Developers;
+import com.crionuke.devstracker.server.controllers.DeveloperController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 public class AppleSearchApi {
-    private static final Logger logger = LoggerFactory.getLogger(Developers.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeveloperController.class);
 
     private static final String BASE_URL = "https://itunes.apple.com";
     private static final int SEARCH_LIMIT = 10;
