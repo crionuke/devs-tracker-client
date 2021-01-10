@@ -1,11 +1,8 @@
 package com.crionuke.devstracker.server.services;
 
+import com.crionuke.devstracker.server.services.actions.*;
 import com.crionuke.devstracker.server.services.dto.SearchDeveloper;
 import com.crionuke.devstracker.server.exceptions.*;
-import com.crionuke.devstracker.server.services.actions.InsertDeveloper;
-import com.crionuke.devstracker.server.services.actions.InsertTracker;
-import com.crionuke.devstracker.server.services.actions.SelectDeveloper;
-import com.crionuke.devstracker.server.services.actions.SelectTrackedDevelopers;
 import com.crionuke.devstracker.server.services.api.AppleSearchApi;
 import com.crionuke.devstracker.server.services.dto.Developer;
 import com.crionuke.devstracker.server.services.dto.TrackedDeveloper;
@@ -78,6 +75,26 @@ public class DeveloperService {
                 // Commit
                 connection.commit();
             } catch (DeveloperNotCachedException | TrackerAlreadyAddedException | InternalServerException e) {
+                rollbackNoException(connection);
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new InternalServerException("Datasource unavailable, " + e.getMessage(), e);
+        }
+    }
+
+    public void deleteTracker(User user, long developerAppleId) throws
+            DeveloperNotFoundException, TrackerNotFoundException, InternalServerException {
+        // TODO: Check arguments
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                SelectDeveloper selectDeveloper = new SelectDeveloper(connection, developerAppleId);
+                Developer developer = selectDeveloper.getDeveloper();
+                DeleteTracker deleteTracker = new DeleteTracker(connection, user.getId(), developer.getId());
+                // Commit
+                connection.commit();
+            } catch (DeveloperNotFoundException | InternalServerException e) {
                 rollbackNoException(connection);
                 throw e;
             }

@@ -36,7 +36,6 @@ public class UserService {
                 try {
                     SelectUser selectUser = new SelectUser(connection, token);
                     User user = selectUser.getUser();
-                    logger.debug("User authenticated, {}", user);
                     return user;
                 } catch (UserNotFoundException e) {
                     throw new ForbiddenRequestException("User token not found, token=" + token);

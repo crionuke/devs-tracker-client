@@ -1,10 +1,10 @@
 package com.crionuke.devstracker.server.controllers;
 
-import com.crionuke.devstracker.server.controllers.dto.*;
-import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
-import com.crionuke.devstracker.server.exceptions.ForbiddenRequestException;
-import com.crionuke.devstracker.server.exceptions.InternalServerException;
-import com.crionuke.devstracker.server.exceptions.TrackerAlreadyAddedException;
+import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
+import com.crionuke.devstracker.server.controllers.dto.SearchRequest;
+import com.crionuke.devstracker.server.controllers.dto.SearchResponse;
+import com.crionuke.devstracker.server.controllers.dto.TrackedDevelopersResponse;
+import com.crionuke.devstracker.server.exceptions.*;
 import com.crionuke.devstracker.server.services.DeveloperService;
 import com.crionuke.devstracker.server.services.UserService;
 import com.crionuke.devstracker.server.services.dto.SearchDeveloper;
@@ -52,26 +52,16 @@ public class DeveloperController {
         }
     }
 
-    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/{developerAppleId}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest request) {
+    public ResponseEntity add(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
         if (logger.isInfoEnabled()) {
-            logger.info("Search request, {}", request);
-        }
-        List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
-        return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
-    }
-
-    @PostMapping(value = "/{developerAppleId}/track", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity track(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Track request, developerAppleId={}", developerAppleId);
+            logger.info("Add request, developerAppleId={}", developerAppleId);
         }
         try {
             User user = userService.selectUser(headers);
             developerService.track(user, developerAppleId);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.CREATED);
         } catch (ForbiddenRequestException e) {
             logger.info(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
@@ -85,5 +75,41 @@ public class DeveloperController {
             logger.warn(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @DeleteMapping(value = "/{developerAppleId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity delete(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
+        if (logger.isInfoEnabled()) {
+            logger.info("Delete request, developerAppleId={}", developerAppleId);
+        }
+        try {
+            User user = userService.selectUser(headers);
+            developerService.deleteTracker(user, developerAppleId);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (ForbiddenRequestException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (DeveloperNotFoundException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NO_CONTENT);
+        } catch (TrackerNotFoundException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NO_CONTENT);
+        } catch (InternalServerException e) {
+            logger.warn(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest request) {
+        if (logger.isInfoEnabled()) {
+            logger.info("Search request, {}", request);
+        }
+        List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
+        return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
     }
 }
