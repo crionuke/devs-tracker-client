@@ -29,7 +29,7 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity createUser(@PathVariable String token) {
         if (logger.isInfoEnabled()) {
-            logger.info("Create user, token={}", token);
+            logger.info("Post user, token={}", token);
         }
         try {
             userService.createUser(token);

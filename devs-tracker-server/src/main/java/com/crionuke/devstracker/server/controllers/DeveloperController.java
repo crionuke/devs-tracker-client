@@ -33,81 +33,11 @@ public class DeveloperController {
         this.developerService = developerService;
     }
 
-    @GetMapping
-    public ResponseEntity getDevelopers(@RequestHeader HttpHeaders headers) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Get developers");
-        }
-        try {
-            User user = userService.selectUser(headers);
-            List<TrackedDeveloper> trackedDevelopers = developerService.getDevelopers(user);
-            return new ResponseEntity(
-                    new TrackedDevelopersResponse(trackedDevelopers.size(), trackedDevelopers), HttpStatus.OK);
-        } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (InternalServerException e) {
-            logger.warn(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping(value = "/{developerAppleId}", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity add(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Add request, developerAppleId={}", developerAppleId);
-        }
-        try {
-            User user = userService.selectUser(headers);
-            developerService.track(user, developerAppleId);
-            return new ResponseEntity(HttpStatus.CREATED);
-        } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (DeveloperNotCachedException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (TrackerAlreadyAddedException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (InternalServerException e) {
-            logger.warn(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping(value = "/{developerAppleId}", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity delete(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Delete request, developerAppleId={}", developerAppleId);
-        }
-        try {
-            User user = userService.selectUser(headers);
-            developerService.deleteTracker(user, developerAppleId);
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (DeveloperNotFoundException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NO_CONTENT);
-        } catch (TrackerNotFoundException e) {
-            logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NO_CONTENT);
-        } catch (InternalServerException e) {
-            logger.warn(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest request) {
         if (logger.isInfoEnabled()) {
-            logger.info("Search request, {}", request);
+            logger.info("Search developer, {}", request);
         }
         List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
         return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
