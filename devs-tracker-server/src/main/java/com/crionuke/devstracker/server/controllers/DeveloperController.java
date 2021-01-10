@@ -1,14 +1,13 @@
 package com.crionuke.devstracker.server.controllers;
 
-import com.crionuke.devstracker.server.controllers.dto.SearchDeveloper;
-import com.crionuke.devstracker.server.controllers.dto.SearchRequest;
-import com.crionuke.devstracker.server.controllers.dto.SearchResponse;
-import com.crionuke.devstracker.server.controllers.dto.TrackRequest;
-import com.crionuke.devstracker.server.exceptions.AnonymousUserNotFoundException;
-import com.crionuke.devstracker.server.exceptions.InternalServerException;
+import com.crionuke.devstracker.server.controllers.dto.*;
+import com.crionuke.devstracker.server.exceptions.*;
 import com.crionuke.devstracker.server.services.DeveloperService;
+import com.crionuke.devstracker.server.services.UserService;
+import com.crionuke.devstracker.server.services.dto.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,11 @@ import java.util.List;
 public class DeveloperController {
     private static final Logger logger = LoggerFactory.getLogger(DeveloperController.class);
 
+    private final UserService userService;
     private final DeveloperService developerService;
 
-    public DeveloperController(DeveloperService developerService) {
+    public DeveloperController(UserService userService, DeveloperService developerService) {
+        this.userService = userService;
         this.developerService = developerService;
     }
 
@@ -44,19 +45,26 @@ public class DeveloperController {
 
     @PostMapping(value = "/{developerAppleId}/track", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity track(@PathVariable long developerAppleId, @RequestBody TrackRequest request) {
+    public ResponseEntity track(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
         if (logger.isInfoEnabled()) {
-            logger.info("Track request, {}", request);
+            logger.info("Track request, developerAppleId={}", developerAppleId);
         }
         try {
-            developerService.track(request.getAnonymousId(), developerAppleId);
+            User user = userService.selectUser(headers);
+            developerService.track(user, developerAppleId);
             return new ResponseEntity(HttpStatus.OK);
-        } catch (AnonymousUserNotFoundException e) {
+        } catch (UnauthorizedRequestException e) {
             logger.info(e.getMessage(), e);
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (DeveloperNotCachedException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (TrackerAlreadyAddedException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

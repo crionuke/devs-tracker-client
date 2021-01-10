@@ -4,12 +4,12 @@ public class User {
 
     private final long id;
     private final long created;
-    private final String anonymousId;
+    private final String token;
 
-    public User(long id, long created, String anonymousId) {
+    public User(long id, long created, String token) {
         this.id = id;
         this.created = created;
-        this.anonymousId = anonymousId;
+        this.token = token;
     }
 
     public long getId() {
@@ -20,14 +20,14 @@ public class User {
         return created;
     }
 
-    public String getAnonymousId() {
-        return anonymousId;
+    public String getToken() {
+        return token;
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "created=" + created + ", " +
-                "anonymousId=\"" + anonymousId + "\")";
+                "token=\"" + token + "\")";
     }
 }

@@ -1,13 +1,15 @@
 CREATE TABLE IF NOT EXISTS users (
     u_id BIGSERIAL PRIMARY KEY,
     u_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    u_anonymous_id VARCHAR(128) UNIQUE NOT NULL
+    u_token VARCHAR(128) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS trackers (
     t_id BIGSERIAL PRIMARY KEY,
+    t_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     t_user_id BIGINT NOT NULL,
-    t_developer_id BIGINT NOT NULL
+    t_developer_id BIGINT NOT NULL,
+    UNIQUE(t_user_id, t_developer_id)
 );
 
 CREATE TABLE IF NOT EXISTS developers (

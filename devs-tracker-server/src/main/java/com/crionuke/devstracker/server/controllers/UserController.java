@@ -1,6 +1,7 @@
 package com.crionuke.devstracker.server.controllers;
 
-import com.crionuke.devstracker.server.exceptions.AnonymousUserAlreadyCreatedException;
+import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
+import com.crionuke.devstracker.server.exceptions.UserAlreadyCreatedException;
 import com.crionuke.devstracker.server.exceptions.InternalServerException;
 import com.crionuke.devstracker.server.services.UserService;
 import org.slf4j.Logger;
@@ -24,21 +25,21 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "/{anonymousId}", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/{token}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity createAnonymousUser(@PathVariable String anonymousId) {
+    public ResponseEntity createUser(@PathVariable String token) {
         if (logger.isInfoEnabled()) {
-            logger.info("Create anonymous user, anonymousId={}", anonymousId);
+            logger.info("Create user, token={}", token);
         }
         try {
-            userService.createAnonymousUser(anonymousId);
+            userService.createUser(token);
             return new ResponseEntity(HttpStatus.CREATED);
-        } catch (AnonymousUserAlreadyCreatedException e) {
+        } catch (UserAlreadyCreatedException e) {
             logger.info(e.getMessage(), e);
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
