@@ -1,19 +1,19 @@
-package com.crionuke.devstracker.server.controllers.dto;
+package com.crionuke.devstracker.server.services.dto;
 
 import java.util.Objects;
 
 public class SearchDeveloper {
 
-    private final long id;
+    private final long appleId;
     private final String name;
 
-    public SearchDeveloper(long id, String name) {
-        this.id = id;
+    public SearchDeveloper(long appleId, String name) {
+        this.appleId = appleId;
         this.name = name;
     }
 
-    public long getId() {
-        return id;
+    public long getAppleId() {
+        return appleId;
     }
 
     public String getName() {
@@ -25,17 +25,17 @@ public class SearchDeveloper {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SearchDeveloper that = (SearchDeveloper) o;
-        return id == that.id &&
+        return appleId == that.appleId &&
                 name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(appleId, name);
     }
 
     @Override
     public String toString() {
-        return "\"" + name + "/id" + id + "\"";
+        return "\"" + name + "/id" + appleId + "\"";
     }
 }

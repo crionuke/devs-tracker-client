@@ -1,9 +1,14 @@
 package com.crionuke.devstracker.server.controllers;
 
 import com.crionuke.devstracker.server.controllers.dto.*;
-import com.crionuke.devstracker.server.exceptions.*;
+import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
+import com.crionuke.devstracker.server.exceptions.ForbiddenRequestException;
+import com.crionuke.devstracker.server.exceptions.InternalServerException;
+import com.crionuke.devstracker.server.exceptions.TrackerAlreadyAddedException;
 import com.crionuke.devstracker.server.services.DeveloperService;
 import com.crionuke.devstracker.server.services.UserService;
+import com.crionuke.devstracker.server.services.dto.SearchDeveloper;
+import com.crionuke.devstracker.server.services.dto.TrackedDeveloper;
 import com.crionuke.devstracker.server.services.dto.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +34,22 @@ public class DeveloperController {
     }
 
     @GetMapping
-    public ResponseEntity getTrackedDevelopers() {
-        return new ResponseEntity(HttpStatus.OK);
+    public ResponseEntity getDevelopers(@RequestHeader HttpHeaders headers) {
+        if (logger.isInfoEnabled()) {
+            logger.info("Get developers");
+        }
+        try {
+            User user = userService.selectUser(headers);
+            List<TrackedDeveloper> trackedDevelopers = developerService.getDevelopers(user);
+            return new ResponseEntity(
+                    new TrackedDevelopersResponse(trackedDevelopers.size(), trackedDevelopers), HttpStatus.OK);
+        } catch (ForbiddenRequestException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (InternalServerException e) {
+            logger.warn(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -39,8 +58,8 @@ public class DeveloperController {
         if (logger.isInfoEnabled()) {
             logger.info("Search request, {}", request);
         }
-        List<SearchDeveloper> developers = developerService.search(request.getCountries(), request.getTerm());
-        return new ResponseEntity(new SearchResponse(developers.size(), developers), HttpStatus.OK);
+        List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
+        return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{developerAppleId}/track", consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -53,7 +72,7 @@ public class DeveloperController {
             User user = userService.selectUser(headers);
             developerService.track(user, developerAppleId);
             return new ResponseEntity(HttpStatus.OK);
-        } catch (UnauthorizedRequestException e) {
+        } catch (ForbiddenRequestException e) {
             logger.info(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (DeveloperNotCachedException e) {

@@ -1,4 +1,4 @@
-package com.crionuke.devstracker.server.api.dto;
+package com.crionuke.devstracker.server.services.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

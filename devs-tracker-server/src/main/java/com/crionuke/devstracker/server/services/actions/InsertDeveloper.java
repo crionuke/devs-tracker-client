@@ -37,8 +37,7 @@ public class InsertDeveloper {
             }
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
-                throw new DeveloperAlreadyAddedException("Developer already added, " +
-                        "appleId=" + appleId + ", name=" + name, e);
+                throw new DeveloperAlreadyAddedException("Developer already added, appleId=" + appleId, e);
             } else {
                 throw new InternalServerException("Transaction failed, " + e.getMessage(), e);
             }

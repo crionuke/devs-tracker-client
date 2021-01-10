@@ -1,6 +1,6 @@
-package com.crionuke.devstracker.server.api;
+package com.crionuke.devstracker.server.services.api;
 
-import com.crionuke.devstracker.server.api.dto.AppleSearchResponse;
+import com.crionuke.devstracker.server.services.api.dto.AppleSearchResponse;
 import com.crionuke.devstracker.server.controllers.DeveloperController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

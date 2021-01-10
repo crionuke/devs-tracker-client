@@ -1,12 +1,14 @@
 package com.crionuke.devstracker.server.services;
 
-import com.crionuke.devstracker.server.api.AppleSearchApi;
-import com.crionuke.devstracker.server.controllers.dto.SearchDeveloper;
+import com.crionuke.devstracker.server.services.dto.SearchDeveloper;
 import com.crionuke.devstracker.server.exceptions.*;
 import com.crionuke.devstracker.server.services.actions.InsertDeveloper;
 import com.crionuke.devstracker.server.services.actions.InsertTracker;
 import com.crionuke.devstracker.server.services.actions.SelectDeveloper;
+import com.crionuke.devstracker.server.services.actions.SelectTrackedDevelopers;
+import com.crionuke.devstracker.server.services.api.AppleSearchApi;
 import com.crionuke.devstracker.server.services.dto.Developer;
+import com.crionuke.devstracker.server.services.dto.TrackedDeveloper;
 import com.crionuke.devstracker.server.services.dto.Tracker;
 import com.crionuke.devstracker.server.services.dto.User;
 import org.slf4j.Logger;
@@ -36,9 +38,22 @@ public class DeveloperService {
         searchCache = new ConcurrentHashMap<>();
     }
 
+    public List<TrackedDeveloper> getDevelopers(User user) throws InternalServerException {
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                SelectTrackedDevelopers selectTrackedDevelopers = new SelectTrackedDevelopers(connection, user.getId());
+                return selectTrackedDevelopers.getTrackedDevelopers();
+            } catch (InternalServerException e) {
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new InternalServerException("Datasource unavailable, " + e.getMessage(), e);
+        }
+    }
+
     public List<SearchDeveloper> search(List<String> countries, String term) {
         // TODO: Check arguments
-        List<SearchDeveloper> developers = appleSearchApi
+        List<SearchDeveloper> searchDevelopers = appleSearchApi
                 .searchDeveloper(countries, term)
                 .flatMap(response -> Flux.fromIterable(response.getResults()))
                 .map(result -> new SearchDeveloper(result.getArtistId(), result.getArtistName()))
@@ -47,8 +62,8 @@ public class DeveloperService {
                 .collectList()
                 .block();
         // Cache results
-        developers.stream().forEach(developer -> searchCache.put(developer.getId(), developer));
-        return developers;
+        searchDevelopers.stream().forEach(searchDeveloper -> searchCache.put(searchDeveloper.getAppleId(), searchDeveloper));
+        return searchDevelopers;
     }
 
     public void track(User user, long developerAppleId) throws
@@ -81,14 +96,14 @@ public class DeveloperService {
             if (searchDeveloper != null) {
                 try {
                     InsertDeveloper insertDeveloper =
-                            new InsertDeveloper(connection, searchDeveloper.getId(), searchDeveloper.getName());
+                            new InsertDeveloper(connection, searchDeveloper.getAppleId(), searchDeveloper.getName());
                     return insertDeveloper.getDeveloper();
                 } catch (DeveloperAlreadyAddedException e2) {
                     try {
                         SelectDeveloper selectDeveloper = new SelectDeveloper(connection, developerAppleId);
                         return selectDeveloper.getDeveloper();
                     } catch (DeveloperNotFoundException e3) {
-                        throw new InternalServerException("Wrong internal state around developer, " +
+                        throw new InternalServerException("Wrong internal state around searchDeveloper, " +
                                 "developerAppleId=" + developerAppleId);
                     }
                 }
