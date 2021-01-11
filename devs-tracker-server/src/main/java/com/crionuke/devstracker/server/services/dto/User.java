@@ -3,12 +3,12 @@ package com.crionuke.devstracker.server.services.dto;
 public class User {
 
     private final long id;
-    private final long created;
+    private final long added;
     private final String token;
 
-    public User(long id, long created, String token) {
+    public User(long id, long added, String token) {
         this.id = id;
-        this.created = created;
+        this.added = added;
         this.token = token;
     }
 
@@ -16,8 +16,8 @@ public class User {
         return id;
     }
 
-    public long getCreated() {
-        return created;
+    public long getAdded() {
+        return added;
     }
 
     public String getToken() {
@@ -27,7 +27,7 @@ public class User {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "created=" + created + ", " +
+                "added=" + added + ", " +
                 "token=\"" + token + "\")";
     }
 }

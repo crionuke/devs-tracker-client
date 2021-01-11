@@ -1,14 +1,10 @@
 package com.crionuke.devstracker.server.controllers;
 
 import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
-import com.crionuke.devstracker.server.controllers.dto.SearchRequest;
-import com.crionuke.devstracker.server.controllers.dto.SearchResponse;
 import com.crionuke.devstracker.server.controllers.dto.TrackedDevelopersResponse;
 import com.crionuke.devstracker.server.exceptions.*;
-import com.crionuke.devstracker.server.services.DeveloperService;
 import com.crionuke.devstracker.server.services.TrackerService;
 import com.crionuke.devstracker.server.services.UserService;
-import com.crionuke.devstracker.server.services.dto.SearchDeveloper;
 import com.crionuke.devstracker.server.services.dto.TrackedDeveloper;
 import com.crionuke.devstracker.server.services.dto.User;
 import org.slf4j.Logger;
@@ -40,7 +36,7 @@ public class TrackerController {
             logger.info("Get trackers");
         }
         try {
-            User user = userService.selectUser(headers);
+            User user = userService.authenticate(headers);
             List<TrackedDeveloper> trackedDevelopers = trackerService.getDevelopers(user);
             return new ResponseEntity(
                     new TrackedDevelopersResponse(trackedDevelopers.size(), trackedDevelopers), HttpStatus.OK);
@@ -60,7 +56,7 @@ public class TrackerController {
             logger.info("Post tracker, developerAppleId={}", developerAppleId);
         }
         try {
-            User user = userService.selectUser(headers);
+            User user = userService.authenticate(headers);
             trackerService.trackDeveloper(user, developerAppleId);
             return new ResponseEntity(HttpStatus.CREATED);
         } catch (ForbiddenRequestException e) {
@@ -85,7 +81,7 @@ public class TrackerController {
             logger.info("Delete tracker, developerAppleId={}", developerAppleId);
         }
         try {
-            User user = userService.selectUser(headers);
+            User user = userService.authenticate(headers);
             trackerService.deleteTracker(user, developerAppleId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (ForbiddenRequestException e) {

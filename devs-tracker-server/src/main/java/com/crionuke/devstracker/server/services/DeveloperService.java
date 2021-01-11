@@ -26,7 +26,7 @@ public class DeveloperService {
 
     public List<SearchDeveloper> search(List<String> countries, String term) {
         // TODO: Check arguments
-        List<SearchDeveloper> searchDevelopers = appleSearchApi
+        List<SearchDeveloper> developers = appleSearchApi
                 .searchDeveloper(countries, term)
                 .flatMap(response -> Flux.fromIterable(response.getResults()))
                 .map(result -> new SearchDeveloper(result.getArtistId(), result.getArtistName()))
@@ -35,8 +35,9 @@ public class DeveloperService {
                 .collectList()
                 .block();
         // Cache results
-        searchDevelopers.stream().forEach(searchDeveloper -> searchCache.put(searchDeveloper.getAppleId(), searchDeveloper));
-        return searchDevelopers;
+        developers.stream().forEach(searchDeveloper -> searchCache.put(searchDeveloper.getAppleId(), searchDeveloper));
+        logger.debug("Got response from Apple SearchAPI, term={}, {}", term, developers);
+        return developers;
     }
 
     public Map<Long, SearchDeveloper> getSearchCache() {

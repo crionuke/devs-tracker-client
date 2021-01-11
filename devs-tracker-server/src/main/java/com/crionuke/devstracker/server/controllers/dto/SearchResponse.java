@@ -7,24 +7,24 @@ import java.util.List;
 public class SearchResponse {
 
     private final int count;
-    private final List<SearchDeveloper> searchDevelopers;
+    private final List<SearchDeveloper> developers;
 
-    public SearchResponse(int count, List<SearchDeveloper> searchDevelopers) {
+    public SearchResponse(int count, List<SearchDeveloper> developers) {
         this.count = count;
-        this.searchDevelopers = searchDevelopers;
+        this.developers = developers;
     }
 
     public int getCount() {
         return count;
     }
 
-    public List<SearchDeveloper> getSearchDevelopers() {
-        return searchDevelopers;
+    public List<SearchDeveloper> getDevelopers() {
+        return developers;
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(count=\"" + count + "\", " +
-                "searchDevelopers=" + searchDevelopers + ")";
+                "developers=" + developers + ")";
     }
 }

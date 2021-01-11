@@ -35,11 +35,21 @@ public class DeveloperController {
 
     @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SearchResponse> search(@RequestBody SearchRequest request) {
+    public ResponseEntity<SearchResponse> search(@RequestHeader HttpHeaders headers,
+                                                 @RequestBody SearchRequest request) {
         if (logger.isInfoEnabled()) {
             logger.info("Search developer, {}", request);
         }
-        List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
-        return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
+        try {
+            User user = userService.authenticate(headers);
+            List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
+            return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
+        } catch (ForbiddenRequestException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (InternalServerException e) {
+            logger.warn(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

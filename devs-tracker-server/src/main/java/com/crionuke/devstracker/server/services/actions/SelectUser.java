@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class SelectUser {
     private static final Logger logger = LoggerFactory.getLogger(SelectUser.class);
 
-    private final String SELECT_SQL = "SELECT u_id, u_created FROM users WHERE u_token = ?";
+    private final String SELECT_SQL = "SELECT u_id, u_added FROM users WHERE u_token = ?";
 
     private final User user;
 
@@ -25,9 +25,9 @@ public class SelectUser {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    long uId = resultSet.getLong(1);
-                    long uCreated = resultSet.getTimestamp(2).getTime();
-                    user = new User(uId, uCreated, token);
+                    long id = resultSet.getLong(1);
+                    long added = resultSet.getTimestamp(2).getTime();
+                    user = new User(id, added, token);
                     logger.debug("User selected, {}", user);
                 } else {
                     throw new UserNotFoundException("User not found, token=" + token);

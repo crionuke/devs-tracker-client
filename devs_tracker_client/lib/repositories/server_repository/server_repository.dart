@@ -1,20 +1,22 @@
 import 'dart:async';
 
-import "developers_provider/developers_provider.dart";
+import 'package:devs_tracker_client/repositories/server_repository/providers/developer_provider.dart';
+import 'package:devs_tracker_client/repositories/server_repository/providers/tracker_provider.dart';
 
 enum ServerRepositoryStatus { loading, loaded }
 
 class ServerRepository {
   final _controller = StreamController<ServerRepositoryStatus>();
 
-  final DevelopersProvider developersProvider;
+  final DeveloperProvider developerProvider;
+  final TrackerProvider trackerProvider;
 
   ServerRepository(String baseUrl) :
-        developersProvider = DevelopersProvider(baseUrl + "/developers");
+        developerProvider = DeveloperProvider(baseUrl + "/developers"),
+        trackerProvider = TrackerProvider(baseUrl + "/trackers");
 
   Stream<ServerRepositoryStatus> get status async* {
     yield ServerRepositoryStatus.loading;
-    await Future<void>.delayed(const Duration(seconds: 1));
     yield ServerRepositoryStatus.loaded;
   }
 

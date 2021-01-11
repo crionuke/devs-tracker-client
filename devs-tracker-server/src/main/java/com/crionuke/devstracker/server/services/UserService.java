@@ -2,7 +2,7 @@ package com.crionuke.devstracker.server.services;
 
 import com.crionuke.devstracker.server.exceptions.ForbiddenRequestException;
 import com.crionuke.devstracker.server.exceptions.InternalServerException;
-import com.crionuke.devstracker.server.exceptions.UserAlreadyCreatedException;
+import com.crionuke.devstracker.server.exceptions.UserAlreadyAddedException;
 import com.crionuke.devstracker.server.exceptions.UserNotFoundException;
 import com.crionuke.devstracker.server.services.actions.InsertUser;
 import com.crionuke.devstracker.server.services.actions.SelectUser;
@@ -20,35 +20,43 @@ import java.sql.SQLException;
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
+    private static final String AUTH_HEADER_NAME = "Authorization";
+    private static final String AUTH_HEADER_PREFIX = "Bearer ";
+
     private final DataSource dataSource;
 
     UserService(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public User selectUser(HttpHeaders headers) throws ForbiddenRequestException, InternalServerException {
-        String header = headers.getFirst("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            throw new ForbiddenRequestException("Authorization header not found");
+    public User authenticate(HttpHeaders headers) throws ForbiddenRequestException, InternalServerException {
+        String header = headers.getFirst(AUTH_HEADER_NAME);
+        if (header == null || !header.startsWith(AUTH_HEADER_PREFIX)) {
+            throw new ForbiddenRequestException(AUTH_HEADER_NAME + " header not found");
         } else {
             String token = header.replace("Bearer ", "");
-            try (Connection connection = dataSource.getConnection()) {
-                try {
-                    SelectUser selectUser = new SelectUser(connection, token);
-                    User user = selectUser.getUser();
-                    return user;
-                } catch (UserNotFoundException e) {
-                    throw new ForbiddenRequestException("User token not found, token=" + token);
-                }
-            } catch (SQLException e) {
-                throw new InternalServerException("Datasource unavailable, " + e.getMessage(), e);
-            }
+            return getOrAddUser(token);
         }
     }
 
-    public void createUser(String token) throws UserAlreadyCreatedException, InternalServerException {
-        try(Connection connection = dataSource.getConnection()) {
-            InsertUser insertUser = new InsertUser(connection, token);
+    private User getOrAddUser(String token) throws InternalServerException {
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                SelectUser selectUser = new SelectUser(connection, token);
+                return selectUser.getUser();
+            } catch (UserNotFoundException e1) {
+                try {
+                    InsertUser insertUser = new InsertUser(connection, token);
+                    return insertUser.getUser();
+                } catch (UserAlreadyAddedException e2) {
+                    try {
+                        SelectUser selectUser = new SelectUser(connection, token);
+                        return selectUser.getUser();
+                    } catch (UserNotFoundException e3) {
+                        throw new InternalServerException("Wrong internal state around user, token=" + token);
+                    }
+                }
+            }
         } catch (SQLException e) {
             throw new InternalServerException("Datasource unavailable, " + e.getMessage(), e);
         }
