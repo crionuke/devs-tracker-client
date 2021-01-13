@@ -10,20 +10,22 @@ class HomeDeveloperCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String title =
-        "${trackedDeveloper.name}\n${trackedDeveloper.appleId}";
     return Card(
         child: InkWell(
-            onTap: () {
-              context.read<HomeBloc>().showDeveloper(trackedDeveloper);
-            },
-            child: Container(
-              child: Center(
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )));
+      onTap: () {
+        context.read<HomeBloc>().showDeveloper(trackedDeveloper);
+      },
+      child: Container(
+          child: Stack(
+        children: [
+          Center(
+            child: Text(
+              "${trackedDeveloper.name}\n(id${trackedDeveloper.appleId})",
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      )),
+    ));
   }
 }

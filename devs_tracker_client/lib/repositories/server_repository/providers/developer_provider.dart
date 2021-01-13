@@ -21,7 +21,7 @@ class DeveloperProvider extends ApiProvider {
             "term": term,
             "countries": ["ru", "us"]
           });
-      print("Got response from ${response.request.path}, " +
+      print("Got response from ${response.request.method}:${response.request.uri}, " +
           response.data.toString());
       return SearchResponse.fromJson(response.data);
     } on DioError catch (e) {

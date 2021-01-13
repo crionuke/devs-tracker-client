@@ -55,7 +55,10 @@ class _AppViewState extends State<AppView> {
             listener: (context, state) {
               if (state is RepositoriesLoaded) {
                 _navigator.pushAndRemoveUntil(
-                    HomePage.route(), (route) => false);
+                    HomePage.route(
+                        RepositoryProvider.of<PurchaseRepository>(context),
+                        RepositoryProvider.of<ServerRepository>(context)), (
+                    route) => false);
               }
             },
             child: child);

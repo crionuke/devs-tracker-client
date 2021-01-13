@@ -8,4 +8,9 @@ class TrackedDeveloper {
   factory TrackedDeveloper.fromJson(Map<String, dynamic> json) {
     return TrackedDeveloper(json["added"], json["appleId"], json["name"]);
   }
+
+  @override
+  String toString() {
+    return "(added=$added, appleId=$appleId, name=\"$name\")";
+  }
 }

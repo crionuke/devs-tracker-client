@@ -15,22 +15,33 @@ class DeveloperSelected extends SearchEvent {
 
 abstract class SearchState {}
 
-class SearchInitialState extends SearchState {}
+class SearchPageState extends SearchState {}
 
 class SearchLoadingState extends SearchState {}
 
+class SearchFinishedState extends SearchState {}
+
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  final PurchaseRepository puchaseRepository;
+  final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
 
-  SearchBloc(this.puchaseRepository, this.serverRepository)
-      : super(SearchInitialState());
+  SearchBloc(this.purchaseRepository, this.serverRepository)
+      : super(SearchPageState());
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
     if (event is DeveloperSelected) {
-      //
+      DeveloperSelected developerSelected = event;
       yield SearchLoadingState();
+      bool success = await serverRepository.trackerProvider.post(
+          purchaseRepository.getUserID(), developerSelected.developerAppleId);
+      if (success) {
+        print("Tracker added, developerAppleId=${developerSelected
+            .developerAppleId}");
+      } else {
+        // TODO: handle failed requests, show message etc.
+      }
+      yield SearchFinishedState();
     }
   }
 
@@ -40,7 +51,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   Future<List<SearchDeveloper>> search(String term) async {
     SearchResponse searchResponseModel = await serverRepository
-        .developerProvider.search(puchaseRepository.getUserID(), term);
+        .developerProvider.search(purchaseRepository.getUserID(), term);
     return searchResponseModel.developers;
   }
 }
