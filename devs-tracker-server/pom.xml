@@ -10,14 +10,6 @@
         <version>2.3.6.RELEASE</version>
     </parent>
 
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>devs-tracker-api-server</module>
-        <module>devs-tracker-robot</module>
-        <module>devs-tracker-core</module>
-    </modules>
-
     <groupId>com.crionuke.devstracker</groupId>
     <artifactId>devs-tracker-server</artifactId>
     <version>1.0.0</version>
@@ -60,4 +52,20 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
