@@ -35,7 +35,7 @@ public class Link {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "added=" + added + ", " +
+                "added=\"" + added + "\", " +
                 "appId=" + appId + ", " +
                 "country=\"" + country + "\")";
     }

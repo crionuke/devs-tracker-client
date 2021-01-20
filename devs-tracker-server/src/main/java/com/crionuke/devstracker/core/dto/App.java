@@ -4,16 +4,18 @@ import java.sql.Timestamp;
 
 public class App {
 
-    final long id;
-    final Timestamp added;
-    final long appleId;
-    final String title;
-    final long developerId;
+    private final long id;
+    private final Timestamp added;
+    private final long appleId;
+    private final Timestamp releaseDate;
+    private final String title;
+    private final long developerId;
 
-    public App(long id, Timestamp added, long appleId, String title, long developerId) {
+    public App(long id, Timestamp added, long appleId, Timestamp releaseDate, String title, long developerId) {
         this.id = id;
         this.added = added;
         this.appleId = appleId;
+        this.releaseDate = releaseDate;
         this.title = title;
         this.developerId = developerId;
     }
@@ -30,6 +32,10 @@ public class App {
         return appleId;
     }
 
+    public Timestamp getReleaseDate() {
+        return releaseDate;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -43,7 +49,8 @@ public class App {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=" + added + ", " +
                 "appleId=" + appleId + ", " +
-                "title=" + title + ", " +
+                "releaseDate=\"" + releaseDate + "\", " +
+                "title=\"" + title + "\", " +
                 "developerId=\"" + developerId + "\")";
     }
 }

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS devstracker.apps (
     a_id BIGSERIAL PRIMARY KEY,
     a_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     a_apple_id BIGINT UNIQUE NOT NULL,
+    a_release_date TIMESTAMP  NOT NULL,
     a_title VARCHAR(128) NOT NULL,
     a_developer_id BIGINT NOT NULL
 );

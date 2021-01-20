@@ -15,7 +15,9 @@ class TrackerProvider extends ApiProvider {
       return TrackedResponse.fromJson(response.data);
     } on DioError catch (e) {
       ErrorResponse errorResponse = ErrorResponse.fromJson(e.response.data);
-      print("Got error from ${e.request.path}, " + errorResponse.message);
+      print(
+          "Got error from from ${e.response.request.method}:${e.response.request
+              .uri}, " + errorResponse.message);
       return TrackedResponse.empty();
     } catch (e) {
       print("Request failed, " + e);

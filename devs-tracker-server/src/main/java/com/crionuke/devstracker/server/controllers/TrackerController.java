@@ -60,6 +60,7 @@ public class TrackerController {
         }
         try {
             User user = userService.authenticate(headers);
+            // TODO: Check user subscription
             trackerService.trackDeveloper(user, developerAppleId);
             return new ResponseEntity(HttpStatus.CREATED);
         } catch (ForbiddenRequestException e) {

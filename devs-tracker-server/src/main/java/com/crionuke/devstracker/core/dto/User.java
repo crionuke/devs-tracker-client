@@ -29,7 +29,7 @@ public class User {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "added=" + added + ", " +
+                "added=\"" + added + "\", " +
                 "token=\"" + token + "\")";
     }
 }

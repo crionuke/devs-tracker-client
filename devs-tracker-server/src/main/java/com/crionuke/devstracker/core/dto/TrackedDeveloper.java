@@ -28,7 +28,7 @@ public class TrackedDeveloper {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(added=" + added + ", " +
+        return getClass().getSimpleName() + "(added=\"" + added + "\", " +
                 "appleId=" + appleId + ", " +
                 "name=\"" + name + "\")";
     }

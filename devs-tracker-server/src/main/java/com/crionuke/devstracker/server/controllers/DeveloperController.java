@@ -1,8 +1,10 @@
 package com.crionuke.devstracker.server.controllers;
 
+import com.crionuke.devstracker.core.dto.DeveloperApp;
 import com.crionuke.devstracker.core.dto.SearchDeveloper;
 import com.crionuke.devstracker.core.dto.User;
 import com.crionuke.devstracker.core.exceptions.InternalServerException;
+import com.crionuke.devstracker.server.controllers.dto.DeveloperAppsResponse;
 import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
 import com.crionuke.devstracker.server.controllers.dto.SearchRequest;
 import com.crionuke.devstracker.server.controllers.dto.SearchResponse;
@@ -43,6 +45,25 @@ public class DeveloperController {
             User user = userService.authenticate(headers);
             List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
             return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
+        } catch (ForbiddenRequestException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (InternalServerException e) {
+            logger.warn(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "{developerAppleId}/apps")
+    public ResponseEntity getApps(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
+        if (logger.isInfoEnabled()) {
+            logger.info("Get developer's apps, developerAppleId={}", developerAppleId);
+        }
+        try {
+            User user = userService.authenticate(headers);
+            List<DeveloperApp> developerApps = developerService.getDeveloperApps(developerAppleId);
+            return new ResponseEntity(
+                    new DeveloperAppsResponse(developerApps.size(), developerApps), HttpStatus.OK);
         } catch (ForbiddenRequestException e) {
             logger.info(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);

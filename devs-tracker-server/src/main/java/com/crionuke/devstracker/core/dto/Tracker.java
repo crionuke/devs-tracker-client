@@ -35,7 +35,7 @@ public class Tracker {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "added=" + added + ", " +
+                "added=\"" + added + "\", " +
                 "userId=" + userId + ", " +
                 "developerId=" + developerId + ")";
     }

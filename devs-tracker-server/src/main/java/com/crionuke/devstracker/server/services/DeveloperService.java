@@ -3,8 +3,10 @@ package com.crionuke.devstracker.server.services;
 import com.crionuke.devstracker.core.actions.InsertDefaultChecks;
 import com.crionuke.devstracker.core.actions.InsertDeveloper;
 import com.crionuke.devstracker.core.actions.SelectDeveloper;
+import com.crionuke.devstracker.core.actions.SelectDeveloperApps;
 import com.crionuke.devstracker.core.api.apple.AppleApi;
 import com.crionuke.devstracker.core.dto.Developer;
+import com.crionuke.devstracker.core.dto.DeveloperApp;
 import com.crionuke.devstracker.core.dto.SearchDeveloper;
 import com.crionuke.devstracker.core.exceptions.DeveloperAlreadyAddedException;
 import com.crionuke.devstracker.core.exceptions.DeveloperNotFoundException;
@@ -15,7 +17,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,11 +28,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DeveloperService {
     private static final Logger logger = LoggerFactory.getLogger(DeveloperService.class);
 
+    private final DataSource dataSource;
     private final AppleApi appleApi;
-
     private final Map<Long, SearchDeveloper> searchCache;
 
-    DeveloperService(AppleApi appleApi) {
+    DeveloperService(DataSource dataSource, AppleApi appleApi) {
+        this.dataSource = dataSource;
         this.appleApi = appleApi;
         searchCache = new ConcurrentHashMap<>();
     }
@@ -77,6 +82,19 @@ public class DeveloperService {
                 throw new DeveloperNotCachedException("Developer not cached, try search again, " +
                         "developerAppleId=" + developerAppleId);
             }
+        }
+    }
+
+    public List<DeveloperApp> getDeveloperApps(long developerAppleId) throws InternalServerException {
+        try (Connection connection = dataSource.getConnection()) {
+            try {
+                SelectDeveloperApps selectDeveloperApps = new SelectDeveloperApps(connection, developerAppleId);
+                return selectDeveloperApps.getDeveloperApps();
+            } catch (InternalServerException e) {
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new InternalServerException("Datasource unavailable, " + e.getMessage(), e);
         }
     }
 }

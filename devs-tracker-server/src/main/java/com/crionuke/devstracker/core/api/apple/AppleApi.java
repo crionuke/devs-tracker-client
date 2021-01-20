@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class AppleApi {
@@ -82,6 +81,9 @@ public class AppleApi {
     private WebClient createWebClient() {
         return WebClient.builder()
                 .baseUrl(BASE_URL)
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(16 * 1024 * 1024))
                 .build();
     }
 }

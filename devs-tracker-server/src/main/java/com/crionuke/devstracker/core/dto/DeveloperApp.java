@@ -2,34 +2,34 @@ package com.crionuke.devstracker.core.dto;
 
 import java.sql.Timestamp;
 
-public class SearchApp {
+public class DeveloperApp {
 
     private final long appleId;
-    private final String title;
     private final Timestamp releaseDate;
+    private final String title;
 
-    public SearchApp(long appleId, String title, Timestamp releaseDate) {
+    public DeveloperApp(long appleId, Timestamp releaseDate, String title) {
         this.appleId = appleId;
-        this.title = title;
         this.releaseDate = releaseDate;
+        this.title = title;
     }
 
     public long getAppleId() {
         return appleId;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public Timestamp getReleaseDate() {
         return releaseDate;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(appleId=" + appleId + ", " +
-                "title=\"" + title + "\", " +
-                "releaseDate=\"" + releaseDate + "\")";
+                "releaseDate=\"" + releaseDate + "\", " +
+                "title=\"" + title + "\")";
     }
 }

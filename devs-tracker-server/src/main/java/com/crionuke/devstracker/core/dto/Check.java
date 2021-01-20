@@ -47,9 +47,9 @@ public class Check {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "added=" + added + ", " +
+                "added=\"" + added + "\", " +
                 "developerId=" + developerId + ", " +
-                "country=" + country + ", " +
+                "country=\"" + country + "\", " +
                 "priority=" + priority + ", " +
                 "lastCheck=\"" + lastCheck + "\")";
     }

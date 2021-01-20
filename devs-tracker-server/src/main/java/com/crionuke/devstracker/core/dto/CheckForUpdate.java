@@ -5,15 +5,17 @@ import java.sql.Timestamp;
 public class CheckForUpdate {
 
     private final long id;
+    private final Timestamp developerAdded;
     private final long developerAppleId;
     private final String developerName;
     private final String country;
     private final int priority;
     private final Timestamp lastCheck;
 
-    public CheckForUpdate(long id, long developerAppleId, String developerName,
+    public CheckForUpdate(long id, Timestamp developerAdded, long developerAppleId, String developerName,
                    String country, int priority, Timestamp lastCheck) {
         this.id = id;
+        this.developerAdded = developerAdded;
         this.developerAppleId = developerAppleId;
         this.developerName = developerName;
         this.country = country;
@@ -23,6 +25,10 @@ public class CheckForUpdate {
 
     public long getId() {
         return id;
+    }
+
+    public Timestamp getDeveloperAdded() {
+        return developerAdded;
     }
 
     public long getDeveloperAppleId() {
@@ -48,10 +54,11 @@ public class CheckForUpdate {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
+                "developerAdded=\"" + developerAdded + "\", " +
                 "developerAppleId=" + developerAppleId + ", " +
                 "developerName=\"" + developerName + "\", " +
                 "country=" + country + ", " +
                 "priority=" + priority + ", " +
-                "lastCheck=" + lastCheck + ")";
+                "lastCheck=\"" + lastCheck + "\")";
     }
 }

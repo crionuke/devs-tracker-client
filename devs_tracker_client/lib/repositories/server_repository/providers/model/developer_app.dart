@@ -1,15 +1,17 @@
 class DeveloperApp {
   final int appleId;
-  final String name;
+  final DateTime releaseDate;
+  final String title;
 
-  DeveloperApp(this.appleId, this.name);
+  DeveloperApp(this.appleId, String releaseDateString, this.title) :
+        releaseDate = DateTime.parse(releaseDateString);
 
   factory DeveloperApp.fromJson(Map<String, dynamic> json) {
-    return DeveloperApp(json["appleId"], json["name"]);
+    return DeveloperApp(json["appleId"], json["releaseDate"], json["title"]);
   }
 
   @override
   String toString() {
-    return "(appleId=${appleId}, name=\"${name}\")";
+    return "(appleId=${appleId}, appleId=${releaseDate}, name=\"${title}\")";
   }
 }

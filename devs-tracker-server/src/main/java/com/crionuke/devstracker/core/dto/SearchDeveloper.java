@@ -36,6 +36,6 @@ public class SearchDeveloper {
 
     @Override
     public String toString() {
-        return "\"" + name + "/id" + appleId + "\"";
+        return getClass().getSimpleName() + "(name=\"" + name + "\", id=" + appleId + ")";
     }
 }
