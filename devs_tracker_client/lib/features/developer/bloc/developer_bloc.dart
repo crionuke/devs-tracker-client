@@ -71,6 +71,7 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
         DeveloperAppsResponse appsResponse = await serverRepository
             .developerProvider
             .getApps(purchaseRepository.getUserID(), trackedDeveloper.appleId);
+        print("Developer loaded, $appsResponse");
         _data = appsResponse.apps;
         _data.sort((d1, d2) => d2.releaseDate.compareTo(d1.releaseDate));
       }

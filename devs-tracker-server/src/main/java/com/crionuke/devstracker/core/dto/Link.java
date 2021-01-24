@@ -7,15 +7,17 @@ public class Link {
     private final long id;
     private final Timestamp added;
     private final long appId;
-    private final String country;
     private final String title;
+    private final String country;
+    private final String url;
 
-    public Link(long id, Timestamp added, long appId, String title, String country) {
+    public Link(long id, Timestamp added, long appId, String title, String country, String url) {
         this.id = id;
         this.added = added;
         this.appId = appId;
         this.title = title;
         this.country = country;
+        this.url = url;
     }
 
     public long getId() {
@@ -38,12 +40,17 @@ public class Link {
         return country;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=\"" + added + "\", " +
                 "appId=" + appId + ", " +
                 "title=" + title + ", " +
-                "country=\"" + country + "\")";
+                "country=" + country + ", " +
+                "url=\"" + url + "\")";
     }
 }

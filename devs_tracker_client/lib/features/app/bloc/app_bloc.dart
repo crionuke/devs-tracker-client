@@ -1,9 +1,9 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
-import 'package:devs_tracker_client/repositories/server_repository/providers/model/app_response.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 abstract class AppEvent {}
 
@@ -56,5 +56,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void showPage() {
     add(ShowPageEvent());
+  }
+
+  void openApp(String url) {
+    print("Open url, $url");
+    launch(url);
   }
 }

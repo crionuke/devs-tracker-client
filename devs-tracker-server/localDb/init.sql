@@ -45,5 +45,14 @@ CREATE TABLE IF NOT EXISTS devstracker.links (
     l_app_id BIGINT NOT NULL,
     l_title VARCHAR(128) NOT NULL,
     l_country VARCHAR(2) NOT NULL,
+    l_url VARCHAR (256) NOT NULL,
     UNIQUE(l_app_id, l_country)
+);
+
+CREATE TABLE IF NOT EXISTS devstracker.notifications (
+    n_id BIGSERIAL PRIMARY KEY,
+    n_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    n_app_id BIGINT UNIQUE NOT NULL,
+    n_processed BOOLEAN NOT NULL DEFAULT FALSE,
+    n_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

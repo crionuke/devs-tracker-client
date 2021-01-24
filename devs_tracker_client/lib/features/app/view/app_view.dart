@@ -1,6 +1,8 @@
+import 'package:devs_tracker_client/features/app/bloc/app_bloc.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/app_link.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AppView extends StatelessWidget {
   final DeveloperApp developerApp;
@@ -41,12 +43,14 @@ class CountriesList extends StatelessWidget {
             child: ListView.builder(
                 itemCount: links.length,
                 itemBuilder: (context, index) {
+                  AppLink appLink = links[index];
                   return ListTile(
-                    title: Text("${links[index].title}"),
+                    title: Text("${appLink.title}"),
 //                    leading: Text((index + 1).toString()),
-                    leading: Text("[${links[index].country}]"),
+                    leading: Text("[${appLink.country}]"),
                     trailing: Icon(Icons.navigate_next),
                     onTap: () {
+                      context.read<AppBloc>().openApp(appLink.url);
                     },
                   );
                 })));

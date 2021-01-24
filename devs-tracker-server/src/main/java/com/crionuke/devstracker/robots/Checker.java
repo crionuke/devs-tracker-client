@@ -59,7 +59,7 @@ public class Checker {
                         .filter(result -> result.getWrapperType().equals("software"))
                         .map(result ->
                                 new SearchApp(result.getTrackId(), result.getTrackCensoredName(),
-                                        result.getReleaseDate()))
+                                        result.getTrackViewUrl(), result.getReleaseDate()))
                         .collectList()
                         .block();
                 logger.debug("Apps, developerId={}, {}", checkForUpdate.getDeveloperAppleId(), apps);
@@ -74,10 +74,19 @@ public class Checker {
                                     searchApp.getReleaseDate(), checkForUpdate.getDeveloperAppleId());
                             app = insertApp.getApp();
                             if (searchApp.getReleaseDate().getTime() > checkForUpdate.getDeveloperAdded().getTime()) {
-                                logger.info("New released app detected, releaseDate={} > lastCheck={}",
-                                        searchApp.getReleaseDate().getTime(),
-                                        checkForUpdate.getDeveloperAdded().getTime());
-                                // TODO: notify
+                                // Safe notification
+                                try {
+                                    InsertNotification insertNotification =
+                                            new InsertNotification(connection, insertApp.getApp().getId());
+                                    logger.info("New released app detected, " +
+                                                    "releaseDate={} > lastCheck={}, " +
+                                                    "notificationId={}",
+                                            searchApp.getReleaseDate().getTime(),
+                                            checkForUpdate.getDeveloperAdded().getTime(),
+                                            insertNotification.getNotification().getId());
+                                } catch (NotificationAlreadyAddedException e) {
+                                    logger.info(e.getMessage(), e);
+                                }
                             }
                         } catch (AppAlreadyAddedException e2) {
                             logger.debug(e2.getMessage());
@@ -90,7 +99,7 @@ public class Checker {
                     } catch (LinkNotFoundException e1) {
                         try {
                             InsertLink insertLink = new InsertLink(connection, app.getId(), searchApp.getTitle(),
-                                    checkForUpdate.getCountry());
+                                    checkForUpdate.getCountry(), searchApp.getUrl());
                         } catch (LinkAlreadyAddedException e2) {
                             logger.debug(e2.getMessage());
                         }

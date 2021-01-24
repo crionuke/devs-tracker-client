@@ -18,6 +18,7 @@ public class AppleResult {
     private long trackId;
     private String artistName;
     private String trackCensoredName;
+    private String trackViewUrl;
     private Timestamp releaseDate;
 
     public String getWrapperType() {
@@ -58,6 +59,14 @@ public class AppleResult {
 
     public void setTrackCensoredName(String trackCensoredName) {
         this.trackCensoredName = trackCensoredName;
+    }
+
+    public String getTrackViewUrl() {
+        return trackViewUrl;
+    }
+
+    public void setTrackViewUrl(String trackViewUrl) {
+        this.trackViewUrl = trackViewUrl;
     }
 
     public Timestamp getReleaseDate() {

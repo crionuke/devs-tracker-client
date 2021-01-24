@@ -15,7 +15,7 @@ import java.util.Map;
 public class SelectDeveloperApps {
     private static final Logger logger = LoggerFactory.getLogger(SelectDeveloperApps.class);
 
-    private final String SELECT_SQL = "SELECT a_apple_id, a_release_date, l_title, l_country " +
+    private final String SELECT_SQL = "SELECT a_apple_id, a_release_date, l_title, l_country, l_url " +
             "FROM apps INNER JOIN links " +
             "ON a_id = l_app_id " +
             "WHERE a_developer_id = ?";
@@ -33,8 +33,9 @@ public class SelectDeveloperApps {
                     Timestamp appReleaseDate = resultSet.getTimestamp(2);
                     String linkTitle = resultSet.getString(3);
                     String linkCountry = resultSet.getString(4);
+                    String linkUrl = resultSet.getString(5);
                     developerApps.putIfAbsent(appAppleId, new DeveloperApp(appAppleId, appReleaseDate));
-                    developerApps.get(appAppleId).addLink(new AppLink(linkTitle, linkCountry));
+                    developerApps.get(appAppleId).addLink(new AppLink(linkTitle, linkCountry, linkUrl));
                 }
             }
         } catch (SQLException e) {
