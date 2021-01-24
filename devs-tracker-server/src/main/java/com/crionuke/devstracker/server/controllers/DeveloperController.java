@@ -3,6 +3,7 @@ package com.crionuke.devstracker.server.controllers;
 import com.crionuke.devstracker.core.dto.DeveloperApp;
 import com.crionuke.devstracker.core.dto.SearchDeveloper;
 import com.crionuke.devstracker.core.dto.User;
+import com.crionuke.devstracker.core.exceptions.DeveloperNotFoundException;
 import com.crionuke.devstracker.core.exceptions.InternalServerException;
 import com.crionuke.devstracker.server.controllers.dto.DeveloperAppsResponse;
 import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/devstracker/v1/developers")
@@ -64,6 +66,9 @@ public class DeveloperController {
             List<DeveloperApp> developerApps = developerService.getDeveloperApps(developerAppleId);
             return new ResponseEntity(
                     new DeveloperAppsResponse(developerApps.size(), developerApps), HttpStatus.OK);
+        } catch (DeveloperNotFoundException e) {
+            logger.info(e.getMessage(), e);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (ForbiddenRequestException e) {
             logger.info(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);

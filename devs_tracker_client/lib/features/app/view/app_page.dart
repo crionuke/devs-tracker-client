@@ -35,7 +35,8 @@ class AppPage extends StatelessWidget {
           body: BlocBuilder<AppBloc, AppState>(
             builder: (context, state) {
               if (state is AppPageState) {
-                return AppView(state.developerApp, state.appCountries);
+                return AppView(state.developerApp,
+                    state.developerApp.links.values.toList());
               } else {
                 return LoadingView();
               }

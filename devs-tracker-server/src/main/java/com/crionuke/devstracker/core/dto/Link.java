@@ -8,11 +8,13 @@ public class Link {
     private final Timestamp added;
     private final long appId;
     private final String country;
+    private final String title;
 
-    public Link(long id, Timestamp added, long appId, String country) {
+    public Link(long id, Timestamp added, long appId, String title, String country) {
         this.id = id;
         this.added = added;
         this.appId = appId;
+        this.title = title;
         this.country = country;
     }
 
@@ -28,6 +30,10 @@ public class Link {
         return appId;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public String getCountry() {
         return country;
     }
@@ -37,6 +43,7 @@ public class Link {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=\"" + added + "\", " +
                 "appId=" + appId + ", " +
+                "title=" + title + ", " +
                 "country=\"" + country + "\")";
     }
 }

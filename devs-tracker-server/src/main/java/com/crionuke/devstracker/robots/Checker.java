@@ -57,7 +57,9 @@ public class Checker {
                         .lookupDeveloper(checkForUpdate.getDeveloperAppleId(), checkForUpdate.getCountry())
                         .flatMapMany(response -> Flux.fromIterable(response.getResults()))
                         .filter(result -> result.getWrapperType().equals("software"))
-                        .map(result -> new SearchApp(result.getTrackId(), result.getTrackCensoredName(), result.getReleaseDate()))
+                        .map(result ->
+                                new SearchApp(result.getTrackId(), result.getTrackCensoredName(),
+                                        result.getReleaseDate()))
                         .collectList()
                         .block();
                 logger.debug("Apps, developerId={}, {}", checkForUpdate.getDeveloperAppleId(), apps);
@@ -68,12 +70,13 @@ public class Checker {
                         app = selectApp.getApp();
                     } catch (AppNotFoundException e1) {
                         try {
-                            InsertApp insertApp = new InsertApp(connection, searchApp.getAppleId(), searchApp.getReleaseDate(),
-                                    searchApp.getTitle(), checkForUpdate.getDeveloperAppleId());
+                            InsertApp insertApp = new InsertApp(connection, searchApp.getAppleId(),
+                                    searchApp.getReleaseDate(), checkForUpdate.getDeveloperAppleId());
                             app = insertApp.getApp();
                             if (searchApp.getReleaseDate().getTime() > checkForUpdate.getDeveloperAdded().getTime()) {
                                 logger.info("New released app detected, releaseDate={} > lastCheck={}",
-                                        searchApp.getReleaseDate().getTime(), checkForUpdate.getDeveloperAdded().getTime());
+                                        searchApp.getReleaseDate().getTime(),
+                                        checkForUpdate.getDeveloperAdded().getTime());
                                 // TODO: notify
                             }
                         } catch (AppAlreadyAddedException e2) {
@@ -86,8 +89,8 @@ public class Checker {
                         SelectLink selectLink = new SelectLink(connection, app.getId(), checkForUpdate.getCountry());
                     } catch (LinkNotFoundException e1) {
                         try {
-                            InsertLink insertLink =
-                                    new InsertLink(connection, app.getId(), checkForUpdate.getCountry());
+                            InsertLink insertLink = new InsertLink(connection, app.getId(), searchApp.getTitle(),
+                                    checkForUpdate.getCountry());
                         } catch (LinkAlreadyAddedException e2) {
                             logger.debug(e2.getMessage());
                         }

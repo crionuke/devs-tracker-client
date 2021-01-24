@@ -8,15 +8,13 @@ public class App {
     private final Timestamp added;
     private final long appleId;
     private final Timestamp releaseDate;
-    private final String title;
     private final long developerId;
 
-    public App(long id, Timestamp added, long appleId, Timestamp releaseDate, String title, long developerId) {
+    public App(long id, Timestamp added, long appleId, Timestamp releaseDate, long developerId) {
         this.id = id;
         this.added = added;
         this.appleId = appleId;
         this.releaseDate = releaseDate;
-        this.title = title;
         this.developerId = developerId;
     }
 
@@ -36,10 +34,6 @@ public class App {
         return releaseDate;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public long getDeveloperId() {
         return developerId;
     }
@@ -50,7 +44,6 @@ public class App {
                 "added=" + added + ", " +
                 "appleId=" + appleId + ", " +
                 "releaseDate=\"" + releaseDate + "\", " +
-                "title=\"" + title + "\", " +
                 "developerId=\"" + developerId + "\")";
     }
 }

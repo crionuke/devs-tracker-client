@@ -8,9 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 abstract class AppEvent {}
 
 class ShowPageEvent extends AppEvent {
-  final bool reload;
-
-  ShowPageEvent(this.reload);
+  ShowPageEvent();
 }
 
 abstract class AppState {
@@ -26,10 +24,8 @@ class LoadingState extends AppState {
 }
 
 class AppPageState extends AppState {
-  final List<String> appCountries;
 
-  AppPageState(TrackedDeveloper trackedDeveloper, DeveloperApp developerApp,
-      this.appCountries)
+  AppPageState(TrackedDeveloper trackedDeveloper, DeveloperApp developerApp)
       : super(trackedDeveloper, developerApp);
 }
 
@@ -39,28 +35,26 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
 
-  List<String> _data;
-
   AppBloc(this.trackedDeveloper, this.developerApp, this.purchaseRepository,
       this.serverRepository)
       : super(LoadingState(trackedDeveloper, developerApp)) {
-    showPage(true);
+    showPage();
   }
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
     if (event is ShowPageEvent) {
-      if (event.reload || _data == null) {
-        yield LoadingState(trackedDeveloper, developerApp);
-        AppResponse appResponse = await serverRepository.appProvider
-            .get(purchaseRepository.getUserID(), developerApp.appleId);
-        _data = appResponse.countries;
-      }
-      yield AppPageState(trackedDeveloper, developerApp, _data);
+//      if (event.reload || _data == null) {
+//        yield LoadingState(trackedDeveloper, developerApp);
+//        AppResponse appResponse = await serverRepository.appProvider
+//            .get(purchaseRepository.getUserID(), developerApp.appleId);
+//        _data = appResponse.countries;
+//      }
+      yield AppPageState(trackedDeveloper, developerApp);
     }
   }
 
-  void showPage(reload) {
-    add(ShowPageEvent(reload));
+  void showPage() {
+    add(ShowPageEvent());
   }
 }

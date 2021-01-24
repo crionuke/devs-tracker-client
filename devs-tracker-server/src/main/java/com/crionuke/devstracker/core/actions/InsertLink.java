@@ -1,7 +1,6 @@
 package com.crionuke.devstracker.core.actions;
 
 import com.crionuke.devstracker.core.dto.Link;
-import com.crionuke.devstracker.core.exceptions.AppAlreadyAddedException;
 import com.crionuke.devstracker.core.exceptions.InternalServerException;
 import com.crionuke.devstracker.core.exceptions.LinkAlreadyAddedException;
 import org.slf4j.Logger;
@@ -12,22 +11,23 @@ import java.sql.*;
 public class InsertLink {
     private static final Logger logger = LoggerFactory.getLogger(InsertLink.class);
 
-    private final String INSERT_SQL = "INSERT INTO links (l_app_id, l_country) VALUES(?, ?)";
+    private final String INSERT_SQL = "INSERT INTO links (l_app_id, l_title, l_country) VALUES(?, ?, ?)";
 
     private final Link link;
 
-    public InsertLink(Connection connection, long appId, String country)
+    public InsertLink(Connection connection, long appId, String title, String country)
             throws LinkAlreadyAddedException, InternalServerException {
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, appId);
-            statement.setString(2, country);
+            statement.setString(2, title);
+            statement.setString(3, country);
             statement.execute();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     long id = generatedKeys.getLong("l_id");
                     Timestamp added = generatedKeys.getTimestamp("l_added");
-                    link = new Link(id, added, appId, country);
+                    link = new Link(id, added, appId, title, country);
                     logger.info("Link added, {}", link);
                 } else {
                     throw new InternalServerException("Generated key not found");

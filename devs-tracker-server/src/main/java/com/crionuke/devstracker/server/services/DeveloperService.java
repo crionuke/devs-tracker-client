@@ -85,12 +85,15 @@ public class DeveloperService {
         }
     }
 
-    public List<DeveloperApp> getDeveloperApps(long developerAppleId) throws InternalServerException {
+    public List<DeveloperApp> getDeveloperApps(long developerAppleId)
+            throws DeveloperNotFoundException, InternalServerException {
         try (Connection connection = dataSource.getConnection()) {
             try {
-                SelectDeveloperApps selectDeveloperApps = new SelectDeveloperApps(connection, developerAppleId);
+                SelectDeveloper selectDeveloper = new SelectDeveloper(connection, developerAppleId);
+                Developer developer = selectDeveloper.getDeveloper();
+                SelectDeveloperApps selectDeveloperApps = new SelectDeveloperApps(connection, developer.getAppleId());
                 return selectDeveloperApps.getDeveloperApps();
-            } catch (InternalServerException e) {
+            } catch (DeveloperNotFoundException | InternalServerException e) {
                 throw e;
             }
         } catch (SQLException e) {

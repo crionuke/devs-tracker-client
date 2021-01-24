@@ -1,17 +1,19 @@
 package com.crionuke.devstracker.core.dto;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DeveloperApp {
 
     private final long appleId;
     private final Timestamp releaseDate;
-    private final String title;
+    private final List<AppLink> links;
 
-    public DeveloperApp(long appleId, Timestamp releaseDate, String title) {
+    public DeveloperApp(long appleId, Timestamp releaseDate) {
         this.appleId = appleId;
         this.releaseDate = releaseDate;
-        this.title = title;
+        links = new ArrayList<>();
     }
 
     public long getAppleId() {
@@ -22,14 +24,17 @@ public class DeveloperApp {
         return releaseDate;
     }
 
-    public String getTitle() {
-        return title;
+    public List<AppLink> getLinks() {
+        return links;
+    }
+
+    public void addLink(AppLink link) {
+        links.add(link);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(appleId=" + appleId + ", " +
-                "releaseDate=\"" + releaseDate + "\", " +
-                "title=\"" + title + "\")";
+                "releaseDate=\"" + releaseDate + "\")";
     }
 }

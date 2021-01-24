@@ -13,25 +13,24 @@ import java.sql.*;
 public class InsertApp {
     private static final Logger logger = LoggerFactory.getLogger(InsertApp.class);
 
-    private final String INSERT_SQL = "INSERT INTO apps (a_apple_id, a_release_date, a_title, a_developer_id) " +
-            "VALUES(?, ?, ?, ?)";
+    private final String INSERT_SQL = "INSERT INTO apps (a_apple_id, a_release_date, a_developer_id) " +
+            "VALUES(?, ?, ?)";
 
     private final App app;
 
-    public InsertApp(Connection connection, long appleId, Timestamp releaseDate, String title, long developerId)
+    public InsertApp(Connection connection, long appleId, Timestamp releaseDate, long developerId)
             throws AppAlreadyAddedException, InternalServerException {
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, appleId);
             statement.setTimestamp(2, releaseDate);
-            statement.setString(3, title);
-            statement.setLong(4, developerId);
+            statement.setLong(3, developerId);
             statement.execute();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     long id = generatedKeys.getLong("a_id");
                     Timestamp added = generatedKeys.getTimestamp("a_added");
-                    app = new App(id, added, appleId, releaseDate, title, developerId);
+                    app = new App(id, added, appleId, releaseDate, developerId);
                     logger.info("App added, {}", app);
                 } else {
                     throw new InternalServerException("Generated key not found");

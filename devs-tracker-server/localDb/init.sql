@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS devstracker.apps (
     a_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     a_apple_id BIGINT UNIQUE NOT NULL,
     a_release_date TIMESTAMP  NOT NULL,
-    a_title VARCHAR(128) NOT NULL,
     a_developer_id BIGINT NOT NULL
 );
 
@@ -44,6 +43,7 @@ CREATE TABLE IF NOT EXISTS devstracker.links (
     l_id BIGSERIAL PRIMARY KEY,
     l_added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     l_app_id BIGINT NOT NULL,
+    l_title VARCHAR(128) NOT NULL,
     l_country VARCHAR(2) NOT NULL,
     UNIQUE(l_app_id, l_country)
 );
