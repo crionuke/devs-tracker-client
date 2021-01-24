@@ -1,53 +1,43 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
-import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_apps_response.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class DeveloperEvent {}
 
-class ShowPageEvent extends DeveloperEvent {
-  final bool reload;
+class ReloadPageEvent extends DeveloperEvent {}
 
-  ShowPageEvent(this.reload);
-}
+class DeleteAppEvent extends DeveloperEvent {}
 
-class ShowAppEvent extends DeveloperEvent {
-  final DeveloperApp developerApp;
+class DeveloperState {
+  final bool loaded;
+  final bool failed;
+  final bool deleted;
+  final List<DeveloperApp> data;
 
-  ShowAppEvent(this.developerApp);
-}
+  DeveloperState.loading()
+      : loaded = false,
+        failed = false,
+        deleted = false,
+        data = null;
 
-class DeleteEvent extends DeveloperEvent {}
+  DeveloperState.loaded(this.data)
+      : loaded = true,
+        failed = false,
+        deleted = false;
 
-abstract class DeveloperState {
-  TrackedDeveloper trackedDeveloper;
+  DeveloperState.deleted()
+      : loaded = false,
+        failed = false,
+        deleted = true,
+        data = null;
 
-  DeveloperState(this.trackedDeveloper);
-}
-
-class LoadingState extends DeveloperState {
-  LoadingState(TrackedDeveloper trackedDeveloper) : super(trackedDeveloper);
-}
-
-class DeveloperPageState extends DeveloperState {
-  final List<DeveloperApp> apps;
-
-  DeveloperPageState(TrackedDeveloper trackedDeveloper, this.apps)
-      : super(trackedDeveloper);
-}
-
-class ShowAppState extends DeveloperState {
-  final DeveloperApp developerApp;
-
-  ShowAppState(TrackedDeveloper trackedDeveloper, this.developerApp)
-      : super(trackedDeveloper);
-}
-
-class DeveloperDeletedState extends DeveloperState {
-  DeveloperDeletedState(TrackedDeveloper trackedDeveloper)
-      : super(trackedDeveloper);
+  DeveloperState.failed()
+      : loaded = true,
+        failed = true,
+        deleted = false,
+        data = null;
 }
 
 class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
@@ -55,50 +45,43 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
 
-  List<DeveloperApp> _data;
-
   DeveloperBloc(
       this.trackedDeveloper, this.purchaseRepository, this.serverRepository)
-      : super(LoadingState(trackedDeveloper)) {
-    showPage(true);
+      : super(DeveloperState.loading()) {
+    reloadPage();
   }
 
   @override
   Stream<DeveloperState> mapEventToState(DeveloperEvent event) async* {
-    if (event is ShowPageEvent) {
-      if (event.reload || _data == null) {
-        yield LoadingState(trackedDeveloper);
-        DeveloperAppsResponse appsResponse = await serverRepository
-            .developerProvider
-            .getApps(purchaseRepository.getUserID(), trackedDeveloper.appleId);
-        print("Developer loaded, $appsResponse");
-        _data = appsResponse.apps;
-        _data.sort((d1, d2) => d2.releaseDate.compareTo(d1.releaseDate));
-      }
-      yield DeveloperPageState(trackedDeveloper, _data);
-    } else if (event is ShowAppEvent) {
-      yield ShowAppState(trackedDeveloper, event.developerApp);
-    } else if (event is DeleteEvent) {
-      yield LoadingState(trackedDeveloper);
-      if (await serverRepository.trackerProvider
-          .delete(purchaseRepository.getUserID(), trackedDeveloper.appleId)) {
-        print("Developer deleted");
-      } else {
-        // TODO: handle failed requests, show message etc.// TODO: handle failed requests, show message etc.
-      }
-      yield DeveloperDeletedState(trackedDeveloper);
+    if (event is ReloadPageEvent) {
+      yield DeveloperState.loading();
+      yield await serverRepository.developerProvider
+          .getApps(purchaseRepository.getUserID(), trackedDeveloper.appleId)
+          .then((response) {
+        List<DeveloperApp> data = response.apps;
+        data.sort((d1, d2) => d2.releaseDate.compareTo(d1.releaseDate));
+        return DeveloperState.loaded(data);
+      }).catchError((error) {
+        print("Error: " + error.toString());
+        return DeveloperState.failed();
+      });
+    } else if (event is DeleteAppEvent) {
+      yield DeveloperState.loading();
+      yield await serverRepository.trackerProvider
+          .delete(purchaseRepository.getUserID(), trackedDeveloper.appleId)
+          .then((_) => DeveloperState.deleted())
+          .catchError((error) {
+        print("Error: " + error.toString());
+        return DeveloperState.failed();
+      });
     }
   }
 
-  void showPage(reload) {
-    add(ShowPageEvent(reload));
-  }
-
-  void showApp(DeveloperApp developerApp) {
-    add(ShowAppEvent(developerApp));
+  void reloadPage() {
+    add(ReloadPageEvent());
   }
 
   void delete() {
-    add(DeleteEvent());
+    add(DeleteAppEvent());
   }
 }

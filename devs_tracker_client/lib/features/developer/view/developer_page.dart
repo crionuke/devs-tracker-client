@@ -1,9 +1,10 @@
-import 'package:devs_tracker_client/features/app/view/app_page.dart';
 import 'package:devs_tracker_client/features/developer/bloc/developer_bloc.dart';
 import 'package:devs_tracker_client/features/developer/view/developer_view.dart';
+import 'package:devs_tracker_client/features/home/bloc/home_bloc.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
+import 'package:devs_tracker_client/widgets/error_view.dart';
 import 'package:devs_tracker_client/widgets/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,16 +24,7 @@ class DeveloperPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<DeveloperBloc, DeveloperState>(
         listener: (context, state) async {
-          if (state is ShowAppState) {
-            Route route = AppPage.route(
-                state.trackedDeveloper, state.developerApp,
-                RepositoryProvider.of<PurchaseRepository>(context),
-                RepositoryProvider.of<ServerRepository>(context));
-            await Navigator.of(context)
-                .push(route)
-            .then((_) => context.read<DeveloperBloc>().showPage(false));
-
-          } else if (state is DeveloperDeletedState) {
+          if (state.deleted) {
             Navigator.of(context).pop(true);
           }
         },
@@ -50,8 +42,12 @@ class DeveloperPage extends StatelessWidget {
           ),
           body: BlocBuilder<DeveloperBloc, DeveloperState>(
             builder: (context, state) {
-              if (state is DeveloperPageState) {
-                return DeveloperView(state.apps);
+              if (state.loaded) {
+                if (state.failed) {
+                  return ErrorView(() => context.read<DeveloperBloc>().reloadPage());
+                } else {
+                  return DeveloperView(state.data);
+                }
               } else {
                 return LoadingView();
               }

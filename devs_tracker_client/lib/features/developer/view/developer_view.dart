@@ -1,5 +1,8 @@
+import 'package:devs_tracker_client/features/app/view/app_page.dart';
 import 'package:devs_tracker_client/features/developer/bloc/developer_bloc.dart';
+import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
+import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -49,16 +52,24 @@ class AppsList extends StatelessWidget {
                 itemBuilder: (context, index) {
                   DeveloperApp app = apps[index];
                   return ListTile(
-                    title: Text(app.title),
-                    subtitle: Text("Release date: " +
-                        format.format(app.releaseDate.toLocal())
-                            .toString()),
-                    leading: Text((index + 1).toString()),
-                    trailing: Icon(Icons.navigate_next),
-                    onTap: () {
-                      context.read<DeveloperBloc>().showApp(app);
-                    },
+                      title: Text(app.title),
+                      subtitle: Text("Release date: " +
+                          format.format(app.releaseDate.toLocal())
+                              .toString()),
+                      leading: Text((index + 1).toString()),
+                      trailing: Icon(Icons.navigate_next),
+                      onTap: () => _showApp(context, app)
                   );
                 })));
+  }
+
+  void _showApp(BuildContext context, DeveloperApp app) {
+    Navigator.of(context)
+        .push(AppPage.route(
+        context
+            .read<DeveloperBloc>()
+            .trackedDeveloper, app,
+        RepositoryProvider.of<PurchaseRepository>(context),
+        RepositoryProvider.of<ServerRepository>(context)));
   }
 }

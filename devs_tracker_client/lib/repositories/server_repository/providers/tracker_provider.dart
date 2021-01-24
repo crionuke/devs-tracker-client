@@ -7,29 +7,18 @@ class TrackerProvider extends ApiProvider {
   TrackerProvider(String baseUrl) : super(baseUrl);
 
   Future<TrackedResponse> get(String token) async {
-    try {
-      Response response = await dio.get("/",
-          options: createRequestOptions(token));
-      print("Got response from ${response.request.method}:${response.request.uri}, "
-          "statusCode=${response.statusCode}");
-      return TrackedResponse.fromJson(response.data);
-    } on DioError catch (e) {
-      ErrorResponse errorResponse = ErrorResponse.fromJson(e.response.data);
-      print(
-          "Got error from from ${e.response.request.method}:${e.response.request
-              .uri}, " + errorResponse.message);
-      return TrackedResponse.empty();
-    } catch (e) {
-      print("Request failed, " + e);
-      throw e;
-    }
+    Response response = await dio.get("/",
+        options: createRequestOptions(token));
+    print("${response.request.method} to ${response.request
+        .uri}, statusCode=${response.statusCode}");
+    return TrackedResponse.fromJson(response.data);
   }
 
   Future<bool> post(String token, int developerAppleId) async {
     try {
       Response response = await dio.post("/" + developerAppleId.toString(),
           options: createRequestOptions(token));
-      print("Got response from ${response.request.method}:${response.request.uri}, "
+      print("${response.request.method} to ${response.request.uri}, "
           "statusCode=${response.statusCode}");
       return true;
     } on DioError catch (e) {
@@ -42,20 +31,10 @@ class TrackerProvider extends ApiProvider {
     }
   }
 
-  Future<bool> delete(String token, int developerAppleId) async {
-    try {
-      Response response = await dio.delete("/" + developerAppleId.toString(),
-          options: createRequestOptions(token));
-      print("Got response from ${response.request.method}:${response.request.uri}, "
-          "statusCode=${response.statusCode}");
-      return true;
-    } on DioError catch (e) {
-      ErrorResponse errorResponse = ErrorResponse.fromJson(e.response.data);
-      print("Got error from ${e.request.path}, " + errorResponse.message);
-      return false;
-    } catch (e) {
-      print("Request failed, " + e);
-      throw e;
-    }
+  Future<void> delete(String token, int developerAppleId) async {
+    Response response = await dio.delete("/" + developerAppleId.toString(),
+        options: createRequestOptions(token));
+    print("${response.request.method} to ${response.request.uri}, "
+        "statusCode=${response.statusCode}");
   }
 }
