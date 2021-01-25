@@ -16,7 +16,7 @@ class DeveloperProvider extends ApiProvider {
             "term": term,
             "countries": ["ru", "us"]
           });
-      print("Got response from ${response.request.method}:${response.request.uri}, " +
+      print("${response.request.method} to ${response.request.uri}, " +
           response.data.toString());
       return SearchResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -30,23 +30,11 @@ class DeveloperProvider extends ApiProvider {
   }
 
   Future<DeveloperAppsResponse> getApps(String token, int developerAppleId) async {
-    try {
-      Response response = await dio.get(
-          "/" + developerAppleId.toString() + "/apps",
-          options: createRequestOptions(token));
-      print("Got response from ${response.request.method}:${response.request
-          .uri}, "
-          "statusCode=${response.statusCode}");
-      return DeveloperAppsResponse.fromJson(response.data);
-    } on DioError catch (e) {
-      ErrorResponse errorResponse = ErrorResponse.fromJson(e.response.data);
-      print(
-          "Got error from from ${e.response.request.method}:${e.response.request
-              .uri}, " + errorResponse.message);
-      return DeveloperAppsResponse.empty();
-    } catch (e) {
-      print("Request failed, " + e);
-      throw e;
-    }
+    Response response = await dio.get(
+        "/" + developerAppleId.toString() + "/apps",
+        options: createRequestOptions(token));
+    print("${response.request.method} to ${response.request.uri}, "
+        "statusCode=${response.statusCode}");
+    return DeveloperAppsResponse.fromJson(response.data);
   }
 }

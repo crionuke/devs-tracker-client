@@ -44,12 +44,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
     if (event is ShowPageEvent) {
-//      if (event.reload || _data == null) {
-//        yield LoadingState(trackedDeveloper, developerApp);
-//        AppResponse appResponse = await serverRepository.appProvider
-//            .get(purchaseRepository.getUserID(), developerApp.appleId);
-//        _data = appResponse.countries;
-//      }
       yield AppPageState(trackedDeveloper, developerApp);
     }
   }

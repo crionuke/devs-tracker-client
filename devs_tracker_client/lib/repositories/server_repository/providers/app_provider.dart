@@ -10,8 +10,7 @@ class AppProvider extends ApiProvider {
     try {
       Response response = await dio.get("/" + appAppled.toString(),
           options: createRequestOptions(token));
-      print(
-          "Got response from ${response.request.method}:${response.request.uri}, "
+      print("${response.request.method} to ${response.request.uri}, "
           "statusCode=${response.statusCode}");
       return AppResponse.fromJson(response.data);
     } on DioError catch (e) {

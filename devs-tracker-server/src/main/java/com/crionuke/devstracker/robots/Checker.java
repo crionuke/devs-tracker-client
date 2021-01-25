@@ -4,6 +4,7 @@ import com.crionuke.devstracker.core.actions.*;
 import com.crionuke.devstracker.core.api.apple.AppleApi;
 import com.crionuke.devstracker.core.dto.App;
 import com.crionuke.devstracker.core.dto.CheckForUpdate;
+import com.crionuke.devstracker.core.dto.Developer;
 import com.crionuke.devstracker.core.dto.SearchApp;
 import com.crionuke.devstracker.core.exceptions.*;
 import org.slf4j.Logger;
@@ -52,9 +53,10 @@ public class Checker {
             try {
                 SelectCheckForUpdate selectCheckForUpdate = new SelectCheckForUpdate(connection);
                 CheckForUpdate checkForUpdate = selectCheckForUpdate.getCheckForUpdate();
+                Developer developer = checkForUpdate.getDeveloper();
                 // Lookup developer for apps
                 List<SearchApp> apps = appleApi
-                        .lookupDeveloper(checkForUpdate.getDeveloperAppleId(), checkForUpdate.getCountry())
+                        .lookupDeveloper(developer.getAppleId(), checkForUpdate.getCountry())
                         .flatMapMany(response -> Flux.fromIterable(response.getResults()))
                         .filter(result -> result.getWrapperType().equals("software"))
                         .map(result ->
@@ -62,7 +64,7 @@ public class Checker {
                                         result.getTrackViewUrl(), result.getReleaseDate()))
                         .collectList()
                         .block();
-                logger.debug("Apps, developerId={}, {}", checkForUpdate.getDeveloperAppleId(), apps);
+                logger.debug("Apps, developerId={}, {}", developer.getId(), apps);
                 for (SearchApp searchApp : apps) {
                     App app;
                     try {
@@ -71,18 +73,16 @@ public class Checker {
                     } catch (AppNotFoundException e1) {
                         try {
                             InsertApp insertApp = new InsertApp(connection, searchApp.getAppleId(),
-                                    searchApp.getReleaseDate(), checkForUpdate.getDeveloperAppleId());
+                                    searchApp.getReleaseDate(), developer.getId());
                             app = insertApp.getApp();
-                            if (searchApp.getReleaseDate().getTime() > checkForUpdate.getDeveloperAdded().getTime()) {
+                            if (searchApp.getReleaseDate().getTime() > developer.getAdded().getTime()) {
                                 // Safe notification
                                 try {
                                     InsertNotification insertNotification =
                                             new InsertNotification(connection, insertApp.getApp().getId());
                                     logger.info("New released app detected, " +
-                                                    "releaseDate={} > lastCheck={}, " +
-                                                    "notificationId={}",
-                                            searchApp.getReleaseDate().getTime(),
-                                            checkForUpdate.getDeveloperAdded().getTime(),
+                                                    "releaseDate={} > lastCheck={}, notificationId={}",
+                                            searchApp.getReleaseDate(), developer.getAdded(),
                                             insertNotification.getNotification().getId());
                                 } catch (NotificationAlreadyAddedException e) {
                                     logger.info(e.getMessage(), e);

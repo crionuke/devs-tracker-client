@@ -1,6 +1,5 @@
 import 'package:devs_tracker_client/features/developer/bloc/developer_bloc.dart';
 import 'package:devs_tracker_client/features/developer/view/developer_view.dart';
-import 'package:devs_tracker_client/features/home/bloc/home_bloc.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
@@ -44,7 +43,8 @@ class DeveloperPage extends StatelessWidget {
             builder: (context, state) {
               if (state.loaded) {
                 if (state.failed) {
-                  return ErrorView(() => context.read<DeveloperBloc>().reloadPage());
+                  return ErrorView(() =>
+                      context.read<DeveloperBloc>().reloadPage());
                 } else {
                   return DeveloperView(state.data);
                 }

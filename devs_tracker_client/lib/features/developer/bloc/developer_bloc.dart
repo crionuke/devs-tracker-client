@@ -58,6 +58,7 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
       yield await serverRepository.developerProvider
           .getApps(purchaseRepository.getUserID(), trackedDeveloper.appleId)
           .then((response) {
+        print("Apps loaded, $response");
         List<DeveloperApp> data = response.apps;
         data.sort((d1, d2) => d2.releaseDate.compareTo(d1.releaseDate));
         return DeveloperState.loaded(data);
@@ -69,7 +70,10 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
       yield DeveloperState.loading();
       yield await serverRepository.trackerProvider
           .delete(purchaseRepository.getUserID(), trackedDeveloper.appleId)
-          .then((_) => DeveloperState.deleted())
+          .then((_) {
+        print("Developer deleted");
+        return DeveloperState.deleted();
+      })
           .catchError((error) {
         print("Error: " + error.toString());
         return DeveloperState.failed();

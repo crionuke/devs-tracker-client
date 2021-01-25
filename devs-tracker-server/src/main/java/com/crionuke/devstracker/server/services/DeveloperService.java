@@ -91,7 +91,7 @@ public class DeveloperService {
             try {
                 SelectDeveloper selectDeveloper = new SelectDeveloper(connection, developerAppleId);
                 Developer developer = selectDeveloper.getDeveloper();
-                SelectDeveloperApps selectDeveloperApps = new SelectDeveloperApps(connection, developer.getAppleId());
+                SelectDeveloperApps selectDeveloperApps = new SelectDeveloperApps(connection, developer.getId());
                 return selectDeveloperApps.getDeveloperApps();
             } catch (DeveloperNotFoundException | InternalServerException e) {
                 throw e;

@@ -21,7 +21,7 @@ class DeveloperApp {
 
   @override
   String toString() {
-    return "(appleId=${appleId}, appleId=${releaseDate}, link=${links})";
+    return "(appleId=${appleId}, releaseDate=\"${releaseDate}\", links=${links})";
   }
 
   String get title {

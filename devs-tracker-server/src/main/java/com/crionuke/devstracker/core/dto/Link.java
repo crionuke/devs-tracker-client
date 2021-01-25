@@ -49,7 +49,7 @@ public class Link {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=\"" + added + "\", " +
                 "appId=" + appId + ", " +
-                "title=" + title + ", " +
+                "title=\"" + title + "\", " +
                 "country=" + country + ", " +
                 "url=\"" + url + "\")";
     }

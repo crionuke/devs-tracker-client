@@ -12,10 +12,13 @@ import java.util.List;
 public class SelectTrackedDevelopers {
     private static final Logger logger = LoggerFactory.getLogger(SelectTrackedDevelopers.class);
 
-    private final String SELECT_SQL = "SELECT t_added, d_apple_id, d_name " +
-            "FROM trackers INNER JOIN developers " +
-            "ON t_developer_id = d_id " +
-            "WHERE t_user_id = ?";
+    private final String SELECT_SQL = "" +
+            "SELECT d_id, d_apple_id, d_name, t_added, COUNT(a_apple_id) AS a_count " +
+            "FROM trackers " +
+            "INNER JOIN developers ON t_developer_id = d_id " +
+            "INNER JOIN apps ON d_id = a_developer_id " +
+            "WHERE t_user_id = ? " +
+            "GROUP BY d_id, t_added";
 
     private List<TrackedDeveloper> trackedDevelopers;
 
@@ -25,10 +28,12 @@ public class SelectTrackedDevelopers {
             try (ResultSet resultSet = statement.executeQuery()) {
                 trackedDevelopers = new ArrayList<>();
                 while (resultSet.next()) {
-                    Timestamp added = resultSet.getTimestamp(1);
-                    long appleId = resultSet.getLong(2);
-                    String name = resultSet.getString(3);
-                    TrackedDeveloper trackedDeveloper = new TrackedDeveloper(added, appleId, name);
+                    long developerAppleId = resultSet.getLong(2);
+                    String developerName = resultSet.getString(3);
+                    Timestamp trackerAdded = resultSet.getTimestamp(4);
+                    long appsCount = resultSet.getLong(5);
+                    TrackedDeveloper trackedDeveloper =
+                            new TrackedDeveloper(trackerAdded, developerAppleId, developerName, appsCount);
                     trackedDevelopers.add(trackedDeveloper);
                 }
             }

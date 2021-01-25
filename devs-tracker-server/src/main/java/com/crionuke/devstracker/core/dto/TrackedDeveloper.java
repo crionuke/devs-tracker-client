@@ -4,17 +4,19 @@ import java.sql.Timestamp;
 
 public class TrackedDeveloper {
 
-    private final long added;
+    private final Timestamp added;
     private final long appleId;
     private final String name;
+    private final long count;
 
-    public TrackedDeveloper(Timestamp added, long appleId, String name) {
-        this.added = added.getTime();
+    public TrackedDeveloper(Timestamp added, long appleId, String name, long count) {
+        this.added = added;
         this.appleId = appleId;
         this.name = name;
+        this.count = count;
     }
 
-    public long getAdded() {
+    public Timestamp getAdded() {
         return added;
     }
 
@@ -26,10 +28,15 @@ public class TrackedDeveloper {
         return name;
     }
 
+    public long getCount() {
+        return count;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(added=\"" + added + "\", " +
                 "appleId=" + appleId + ", " +
-                "name=\"" + name + "\")";
+                "name=\"" + name + "\", " +
+                "count=" + count + ")";
     }
 }

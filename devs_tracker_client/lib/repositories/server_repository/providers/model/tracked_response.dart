@@ -19,6 +19,6 @@ class TrackedResponse {
 
   @override
   String toString() {
-    return "count=$count, developer=$developers";
+    return "count=$count, developers=$developers";
   }
 }

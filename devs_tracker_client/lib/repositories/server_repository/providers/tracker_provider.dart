@@ -9,8 +9,8 @@ class TrackerProvider extends ApiProvider {
   Future<TrackedResponse> get(String token) async {
     Response response = await dio.get("/",
         options: createRequestOptions(token));
-    print("${response.request.method} to ${response.request
-        .uri}, statusCode=${response.statusCode}");
+    print("${response.request.method} to ${response.request.uri}, "
+        "statusCode=${response.statusCode}");
     return TrackedResponse.fromJson(response.data);
   }
 
