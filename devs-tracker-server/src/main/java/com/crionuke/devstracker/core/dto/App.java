@@ -41,7 +41,7 @@ public class App {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "added=" + added + ", " +
+                "added=\"" + added + "\", " +
                 "appleId=" + appleId + ", " +
                 "releaseDate=\"" + releaseDate + "\", " +
                 "developerId=\"" + developerId + "\")";

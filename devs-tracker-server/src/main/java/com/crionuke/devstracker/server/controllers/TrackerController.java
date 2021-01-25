@@ -42,6 +42,7 @@ public class TrackerController {
         try {
             User user = userService.authenticate(headers);
             List<TrackedDeveloper> trackedDevelopers = trackerService.getDevelopers(user);
+            logger.debug("List has {} tracked developers, {}", trackedDevelopers.size(), trackedDevelopers);
             return new ResponseEntity(
                     new TrackedResponse(trackedDevelopers.size(), trackedDevelopers), HttpStatus.OK);
         } catch (ForbiddenRequestException e) {

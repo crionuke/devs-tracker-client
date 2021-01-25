@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS devstracker.links (
     l_app_id BIGINT NOT NULL,
     l_title VARCHAR(128) NOT NULL,
     l_country VARCHAR(2) NOT NULL,
-    l_url VARCHAR (256) NOT NULL,
+    l_url VARCHAR (512) NOT NULL,
     UNIQUE(l_app_id, l_country)
 );
 
