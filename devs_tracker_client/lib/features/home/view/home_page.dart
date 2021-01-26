@@ -19,9 +19,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  static final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(title: const Text('Trackers'),
         actions: [
           IconButton(
@@ -45,12 +48,26 @@ class HomePage extends StatelessWidget {
   }
 
   void _addDeveloper(BuildContext context) {
+    scaffoldKey.currentState.hideCurrentSnackBar();
     Navigator.of(context)
         .push(SearchPage.route(
         RepositoryProvider.of<PurchaseRepository>(context),
         RepositoryProvider.of<ServerRepository>(context)))
-        .then((affected) {
-      if (affected != null && affected) {
+        .then((searchResult) {
+      if (searchResult != null) {
+        if (searchResult.statusCode == 201) {
+          scaffoldKey.currentState.showSnackBar(
+              SnackBar(content: Text(
+                  "Tracker for \"${searchResult.searchDeveloper
+                      .name}\" added!")));
+        } else if (searchResult.statusCode == 409) {
+          scaffoldKey.currentState.showSnackBar(
+              SnackBar(content: Text(
+                  "\"${searchResult.searchDeveloper
+                      .name}\" already tracked!")));
+        } else {
+          print("Home page got unknown statusCode=${searchResult.statusCode}");
+        }
         context.read<HomeBloc>().reloadPage();
       }
     });

@@ -31,12 +31,16 @@ class HomeDeveloperCard extends StatelessWidget {
   }
 
   void _showDeveloper(BuildContext context) {
+    Scaffold.of(context).hideCurrentSnackBar();
     Navigator.of(context)
         .push(DeveloperPage.route(trackedDeveloper,
         RepositoryProvider.of<PurchaseRepository>(context),
         RepositoryProvider.of<ServerRepository>(context)))
-        .then((affected) {
-      if (affected != null && affected) {
+        .then((deleted) {
+      if (deleted != null && deleted) {
+        Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text(
+                "Tracker for \"${trackedDeveloper.name}\" deleted!")));
         context.read<HomeBloc>().reloadPage();
       }
     });

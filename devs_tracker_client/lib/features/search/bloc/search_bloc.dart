@@ -6,52 +6,90 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class SearchEvent {}
 
+class ResetPageEvent extends SearchEvent {}
+
 class DeveloperSelected extends SearchEvent {
 
-  final int developerAppleId;
+  final SearchDeveloper searchDeveloper;
 
-  DeveloperSelected(this.developerAppleId);
+  DeveloperSelected(this.searchDeveloper);
 }
 
-abstract class SearchState {}
+class SearchState {
+  final bool loading;
+  final bool failed;
+  final bool finished;
 
-class SearchPageState extends SearchState {}
+  SearchResult result;
 
-class SearchLoadingState extends SearchState {}
+  SearchState.loading()
+      : loading = true,
+        failed = false,
+        finished = false,
+        result = null;
 
-class SearchFinishedState extends SearchState {}
+  SearchState.initiated()
+      : loading = false,
+        failed = false,
+        finished = false,
+        result = null;
+
+  SearchState.failed()
+      : loading = false,
+        failed = true,
+        finished = false,
+        result = null;
+
+  SearchState.finished(this.result)
+      : loading = false,
+        failed = false,
+        finished = true;
+}
+
+class SearchResult {
+  final int statusCode;
+  final SearchDeveloper searchDeveloper;
+
+  SearchResult(this.statusCode, this.searchDeveloper);
+}
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
 
   SearchBloc(this.purchaseRepository, this.serverRepository)
-      : super(SearchPageState());
+      : super(SearchState.loading()) {
+    resetPage();
+  }
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    if (event is DeveloperSelected) {
-      DeveloperSelected developerSelected = event;
-      yield SearchLoadingState();
-      bool success = await serverRepository.trackerProvider.post(
-          purchaseRepository.getUserID(), developerSelected.developerAppleId);
-      if (success) {
-        print("Tracker added, developerAppleId=${developerSelected
-            .developerAppleId}");
-      } else {
-        // TODO: handle failed requests, show message etc.
-      }
-      yield SearchFinishedState();
+    if (event is ResetPageEvent) {
+      yield SearchState.initiated();
+    } else if (event is DeveloperSelected) {
+      yield SearchState.loading();
+      yield await serverRepository.trackerProvider.post(
+          purchaseRepository.getUserID(), event.searchDeveloper.appleId)
+          .then((statusCode) =>
+          SearchState.finished(SearchResult(statusCode, event.searchDeveloper)))
+          .catchError((error) {
+        print("Error: " + error.toString());
+        return SearchState.failed();
+      });
     }
   }
 
-  void select(int developerAppleId) {
-    add(DeveloperSelected(developerAppleId));
+  void select(SearchDeveloper searchDeveloper) {
+    add(DeveloperSelected(searchDeveloper));
   }
 
   Future<List<SearchDeveloper>> search(String term) async {
     SearchResponse searchResponseModel = await serverRepository
         .developerProvider.search(purchaseRepository.getUserID(), term);
     return searchResponseModel.developers;
+  }
+
+  void resetPage() {
+    add(ResetPageEvent());
   }
 }

@@ -72,7 +72,7 @@ public class TrackerController {
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (TrackerAlreadyAddedException e) {
             logger.info(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.CONFLICT);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

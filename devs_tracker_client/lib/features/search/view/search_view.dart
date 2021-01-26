@@ -23,7 +23,7 @@ class SearchPageView extends StatelessWidget {
                 subtitle: Text("id" + model.appleId.toString()),
                 trailing: Icon(Icons.navigate_next),
                 onTap: () {
-                  context.read<SearchBloc>().select(model.appleId);
+                  context.read<SearchBloc>().select(model);
                 },
               );
             }),
