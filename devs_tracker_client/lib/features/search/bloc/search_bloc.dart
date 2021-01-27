@@ -1,6 +1,5 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/search_developer.dart';
-import 'package:devs_tracker_client/repositories/server_repository/providers/model/search_response.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -84,9 +83,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
   Future<List<SearchDeveloper>> search(String term) async {
-    SearchResponse searchResponseModel = await serverRepository
-        .developerProvider.search(purchaseRepository.getUserID(), term);
-    return searchResponseModel.developers;
+    return await serverRepository
+        .developerProvider.search(purchaseRepository.getUserID(), term)
+        .then((response) => response.developers)
+        .catchError((error) => throw Error());
   }
 
   void resetPage() {

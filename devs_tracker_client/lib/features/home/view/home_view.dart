@@ -1,9 +1,9 @@
+import 'package:devs_tracker_client/features/home/bloc/home_bloc.dart';
 import 'package:devs_tracker_client/features/home/view/home_developer_card.dart';
-import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:flutter/material.dart';
 
 class HomePageView extends StatelessWidget {
-  final List<TrackedDeveloper> developers;
+  final List<DeveloperData> developers;
 
   HomePageView(this.developers);
 
@@ -15,8 +15,9 @@ class HomePageView extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Container(child: Center(child: Text("No trackers")))));
     } else {
-      List cards =
-          developers.map((developer) => HomeDeveloperCard(developer)).toList();
+      List cards = developers
+          .map((developer) => HomeDeveloperCard(developer))
+          .toList();
       return SafeArea(
           child: Padding(
               padding: const EdgeInsets.all(20),

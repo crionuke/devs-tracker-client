@@ -17,6 +17,11 @@ class SearchPageView extends StatelessWidget {
                 child: Icon(Icons.search)),
             debounceDuration: Duration(milliseconds: 1000),
             onSearch: context.select((SearchBloc bloc) => bloc.search),
+            onError: (error) {
+              return ListTile(
+                  title: Text("Sorry, something failed, try again"));
+            },
+            emptyWidget: ListTile(title: Text("No results found")),
             onItemFound: (SearchDeveloper model, int index) {
               return ListTile(
                 title: Text(model.name),

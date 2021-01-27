@@ -1,3 +1,4 @@
+import 'package:devs_tracker_client/repositories/db_repository/db_repository.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
@@ -10,7 +11,7 @@ class ReloadPageEvent extends HomeEvent {}
 class HomeState {
   final bool loaded;
   final bool failed;
-  final List<TrackedDeveloper> data;
+  final List<DeveloperData> data;
 
   HomeState.loading()
       : loaded = false,
@@ -27,12 +28,20 @@ class HomeState {
         data = null;
 }
 
+class DeveloperData {
+  final TrackedDeveloper trackedDeveloper;
+  final int changes;
+
+  DeveloperData(this.trackedDeveloper, this.changes);
+}
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
+  final DbRepository dbRepository;
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
 
-  HomeBloc(this.purchaseRepository, this.serverRepository)
+  HomeBloc(this.dbRepository, this.purchaseRepository, this.serverRepository)
       : super(HomeState.loading()) {
     reloadPage();
   }
@@ -45,9 +54,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           .get(purchaseRepository.getUserID())
           .then((response) {
         print("Trackers loaded, $response");
-        List<TrackedDeveloper> data = response.developers;
-        data.sort((d1, d2) => d2.added.compareTo(d1.added));
-        return HomeState.loaded(data);
+        List<TrackedDeveloper> developers = response.developers;
+        developers.sort((d1, d2) => d2.added.compareTo(d1.added));
+        return dbRepository.getAllP().then((map) {
+          return HomeState.loaded(developers
+              .map((developer) => DeveloperData(developer, 0)).toList());
+        }).catchError((error) => HomeState.failed());
       }).catchError((error) {
         print("Error: " + error.toString());
         return HomeState.failed();
