@@ -7,18 +7,18 @@ import 'package:sqflite/sqflite.dart';
 enum DbRepositoryStatus { loading, loaded }
 
 class DbRepository {
-  // UNCOMMENT THIS BEFORE RELEASE!
-  //  static const String DATABASE_NAME = "devstracker.db";
-  // COMMENT THIS BEFORE RELEASE!
-  static const String DATABASE_NAME = "devstracker_004.db";
 
-  final _controller = StreamController<DbRepositoryStatus>();
+  final String databaseName;
+  final StreamController controller;
 
   Database database;
 
+  DbRepository(this.databaseName)
+      : controller = StreamController<DbRepositoryStatus>();
+
   Stream<DbRepositoryStatus> get status async* {
     yield DbRepositoryStatus.loading;
-    String path = join(await getDatabasesPath(), DATABASE_NAME);
+    String path = join(await getDatabasesPath(), databaseName);
     database =
     await openDatabase(path, version: 1,
         onConfigure: (database) async {
@@ -26,7 +26,7 @@ class DbRepository {
         },
         onOpen: (database) async {
           database = database;
-          print("Database $DATABASE_NAME opened");
+          print("Database $databaseName opened");
         },
         onCreate: (database, version) async {
           // Version 1 - initial
@@ -34,13 +34,13 @@ class DbRepository {
             print(ParameterModel.createTableSql);
             await database.execute(ParameterModel.createTableSql);
           }
-          print("Database $DATABASE_NAME with version $version created");
+          print("Database $databaseName with version $version created");
         });
 
     yield DbRepositoryStatus.loaded;
   }
 
-  void dispose() => _controller.close();
+  void dispose() => controller.close();
 
   // Parameter CRUD operations
 

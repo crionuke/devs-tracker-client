@@ -5,9 +5,13 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 enum PurchaseRepositoryStatus { loading, loaded }
 
 class PurchaseRepository {
-  final _controller = StreamController<PurchaseRepositoryStatus>();
+
+  final StreamController controller;
 
   String _appUserID;
+
+  PurchaseRepository()
+      : controller = StreamController<PurchaseRepositoryStatus>();
 
   Stream<PurchaseRepositoryStatus> get status async* {
     yield PurchaseRepositoryStatus.loading;
@@ -20,5 +24,5 @@ class PurchaseRepository {
 
   String getUserID() => _appUserID;
 
-  void dispose() => _controller.close();
+  void dispose() => controller.close();
 }

@@ -6,20 +6,19 @@ import 'package:devs_tracker_client/repositories/server_repository/providers/tra
 enum ServerRepositoryStatus { loading, loaded }
 
 class ServerRepository {
-  final _controller = StreamController<ServerRepositoryStatus>();
-
+  final StreamController controller;
   final DeveloperProvider developerProvider;
   final TrackerProvider trackerProvider;
 
   ServerRepository(String baseUrl) :
+        controller = StreamController<ServerRepositoryStatus>(),
         developerProvider = DeveloperProvider(baseUrl + "/developers"),
         trackerProvider = TrackerProvider(baseUrl + "/trackers");
-
 
   Stream<ServerRepositoryStatus> get status async* {
     yield ServerRepositoryStatus.loading;
     yield ServerRepositoryStatus.loaded;
   }
 
-  void dispose() => _controller.close();
+  void dispose() => controller.close();
 }

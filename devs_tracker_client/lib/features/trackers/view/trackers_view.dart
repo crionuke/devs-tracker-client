@@ -76,7 +76,7 @@ class TrackersView extends StatelessWidget {
               content: Text(
                   "\"${searchResult.searchDeveloper.name}\" already tracked!")));
         } else {
-          print("Home page got unknown statusCode=${searchResult.statusCode}");
+          print("Got unknown statusCode=${searchResult.statusCode}");
         }
         context.read<TrackersBloc>().reload();
       }

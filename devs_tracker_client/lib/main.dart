@@ -4,8 +4,12 @@ import 'package:devs_tracker_client/repositories/purchase_repository/purchase_re
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter/material.dart';
 
-const BASE_URL = "http://localhost:8080/devstracker/v1";
+// static const String DATABASE_NAME = "devstracker.db";
+const String DATABASE_NAME = "devstracker_004.db";
+
+const String BASE_URL = "http://localhost:8080/devstracker/v1";
 
 void main() {
-  runApp(App(DbRepository(), PurchaseRepository(), ServerRepository(BASE_URL)));
+  runApp(App(DbRepository(DATABASE_NAME), PurchaseRepository(),
+      ServerRepository(BASE_URL)));
 }
