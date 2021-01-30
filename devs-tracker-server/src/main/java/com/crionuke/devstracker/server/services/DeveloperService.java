@@ -1,16 +1,15 @@
 package com.crionuke.devstracker.server.services;
 
-import com.crionuke.devstracker.core.actions.InsertDefaultChecks;
-import com.crionuke.devstracker.core.actions.InsertDeveloper;
-import com.crionuke.devstracker.core.actions.SelectDeveloper;
-import com.crionuke.devstracker.core.actions.SelectDeveloperApps;
+import com.crionuke.devstracker.core.actions.*;
 import com.crionuke.devstracker.core.api.apple.AppleApi;
 import com.crionuke.devstracker.core.dto.Developer;
 import com.crionuke.devstracker.core.dto.DeveloperApp;
 import com.crionuke.devstracker.core.dto.SearchDeveloper;
+import com.crionuke.devstracker.core.dto.User;
 import com.crionuke.devstracker.core.exceptions.DeveloperAlreadyAddedException;
 import com.crionuke.devstracker.core.exceptions.DeveloperNotFoundException;
 import com.crionuke.devstracker.core.exceptions.InternalServerException;
+import com.crionuke.devstracker.core.exceptions.TrackerForUpdateNotFoundException;
 import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,19 +84,32 @@ public class DeveloperService {
         }
     }
 
-    public List<DeveloperApp> getDeveloperApps(long developerAppleId)
-            throws DeveloperNotFoundException, InternalServerException {
+    public List<DeveloperApp> getDeveloperApps(User user, long developerAppleId)
+            throws DeveloperNotFoundException, TrackerForUpdateNotFoundException, InternalServerException {
         try (Connection connection = dataSource.getConnection()) {
+            connection.setAutoCommit(false);
             try {
                 SelectDeveloper selectDeveloper = new SelectDeveloper(connection, developerAppleId);
                 Developer developer = selectDeveloper.getDeveloper();
                 SelectDeveloperApps selectDeveloperApps = new SelectDeveloperApps(connection, developer.getId());
+                UpdateTracker updateTracker = new UpdateTracker(connection, user.getId(), developer.getId());
+                // Commit
+                connection.commit();
                 return selectDeveloperApps.getDeveloperApps();
-            } catch (DeveloperNotFoundException | InternalServerException e) {
+            } catch (DeveloperNotFoundException | TrackerForUpdateNotFoundException | InternalServerException e) {
+                rollbackNoException(connection);
                 throw e;
             }
         } catch (SQLException e) {
             throw new InternalServerException("Datasource unavailable, " + e.getMessage(), e);
+        }
+    }
+
+    private void rollbackNoException(Connection connection) {
+        try {
+            connection.rollback();
+        } catch (SQLException e) {
+            logger.warn("Rollback failed, {}", e.getMessage(), e);
         }
     }
 }

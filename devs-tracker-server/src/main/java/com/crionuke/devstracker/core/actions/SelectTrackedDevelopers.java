@@ -13,10 +13,9 @@ public class SelectTrackedDevelopers {
     private static final Logger logger = LoggerFactory.getLogger(SelectTrackedDevelopers.class);
 
     private final String SELECT_SQL = "" +
-            "SELECT t_added, d_apple_id, d_name, COUNT(a_apple_id) AS a_count " +
-            "FROM trackers " +
+            "SELECT t_added, d_apple_id, d_name, COUNT(a_apple_id) AS a_count FROM trackers " +
             "INNER JOIN developers ON t_developer_id = d_id " +
-            "LEFT JOIN apps ON d_id = a_developer_id " +
+            "LEFT JOIN apps ON d_id = a_developer_id AND a_release_date > t_last_view " +
             "WHERE t_user_id = ? " +
             "GROUP BY d_id, t_added";
 

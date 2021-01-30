@@ -5,6 +5,8 @@ import com.crionuke.devstracker.core.dto.SearchDeveloper;
 import com.crionuke.devstracker.core.dto.User;
 import com.crionuke.devstracker.core.exceptions.DeveloperNotFoundException;
 import com.crionuke.devstracker.core.exceptions.InternalServerException;
+import com.crionuke.devstracker.core.exceptions.TrackerForUpdateNotFoundException;
+import com.crionuke.devstracker.core.exceptions.TrackerNotFoundException;
 import com.crionuke.devstracker.server.controllers.dto.DeveloperAppsResponse;
 import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
 import com.crionuke.devstracker.server.controllers.dto.SearchRequest;
@@ -63,10 +65,10 @@ public class DeveloperController {
         }
         try {
             User user = userService.authenticate(headers);
-            List<DeveloperApp> developerApps = developerService.getDeveloperApps(developerAppleId);
+            List<DeveloperApp> developerApps = developerService.getDeveloperApps(user, developerAppleId);
             return new ResponseEntity(
                     new DeveloperAppsResponse(developerApps.size(), developerApps), HttpStatus.OK);
-        } catch (DeveloperNotFoundException e) {
+        } catch (DeveloperNotFoundException | TrackerForUpdateNotFoundException e) {
             logger.info(e.getMessage(), e);
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (ForbiddenRequestException e) {

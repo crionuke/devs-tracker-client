@@ -1,7 +1,5 @@
 package com.crionuke.devstracker.core.actions;
 
-import com.crionuke.devstracker.core.dto.Developer;
-import com.crionuke.devstracker.core.dto.User;
 import com.crionuke.devstracker.core.exceptions.CheckForUpdateNotFoundException;
 import com.crionuke.devstracker.core.exceptions.InternalServerException;
 import org.slf4j.Logger;

@@ -1,14 +1,14 @@
 import 'package:devs_tracker_client/features/developer/view/developer_page.dart';
-import 'package:devs_tracker_client/features/home/bloc/home_bloc.dart';
+import 'package:devs_tracker_client/features/trackers/bloc/trackers_bloc.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomeDeveloperCard extends StatelessWidget {
+class TrackerCard extends StatelessWidget {
   final DeveloperData developerData;
 
-  HomeDeveloperCard(this.developerData);
+  TrackerCard(this.developerData);
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +62,8 @@ class DeveloperCard extends StatelessWidget {
             SnackBar(content: Text(
                 "Tracker for "
                     "\"${developerData.trackedDeveloper.name}\" deleted!")));
-        context.read<HomeBloc>().reloadPage();
       }
+      context.read<TrackersBloc>().reload();
     });
   }
 }

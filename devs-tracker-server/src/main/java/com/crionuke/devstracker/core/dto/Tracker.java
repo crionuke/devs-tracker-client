@@ -8,12 +8,14 @@ public class Tracker {
     private final Timestamp added;
     private final long userId;
     private final long developerId;
+    private final Timestamp lastView;
 
-    public Tracker(long id, Timestamp added, long userId, long developerId) {
+    public Tracker(long id, Timestamp added, long userId, long developerId, Timestamp lastView) {
         this.id = id;
         this.added = added;
         this.userId = userId;
         this.developerId = developerId;
+        this.lastView = lastView;
     }
 
     public long getId() {
@@ -32,11 +34,16 @@ public class Tracker {
         return developerId;
     }
 
+    public Timestamp getLastView() {
+        return lastView;
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=\"" + added + "\", " +
                 "userId=" + userId + ", " +
-                "developerId=" + developerId + ")";
+                "developerId=" + developerId + ", " +
+                "lastView=\"" + lastView + "\")";
     }
 }

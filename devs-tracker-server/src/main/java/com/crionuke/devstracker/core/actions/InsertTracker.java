@@ -26,7 +26,8 @@ public class InsertTracker {
                 if (generatedKeys.next()) {
                     long id = generatedKeys.getLong("t_id");
                     Timestamp added = generatedKeys.getTimestamp("t_added");
-                    tracker = new Tracker(id, added, userId, developerId);
+                    Timestamp lastView = generatedKeys.getTimestamp("t_last_view");
+                    tracker = new Tracker(id, added, userId, developerId, lastView);
                     logger.debug("Tracker added, {}", tracker);
                 } else {
                     throw new InternalServerException("Generated key not found");

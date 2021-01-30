@@ -4,25 +4,25 @@ import 'package:devs_tracker_client/repositories/server_repository/providers/mod
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-abstract class HomeEvent {}
+abstract class TrackersEvent {}
 
-class ReloadPageEvent extends HomeEvent {}
+class ReloadEvent extends TrackersEvent {}
 
-class HomeState {
+class TrackersState {
   final bool loaded;
   final bool failed;
   final List<DeveloperData> data;
 
-  HomeState.loading()
+  TrackersState.loading()
       : loaded = false,
         failed = false,
         data = null;
 
-  HomeState.loaded(this.data)
+  TrackersState.loaded(this.data)
       : loaded = true,
         failed = false;
 
-  HomeState.failed()
+  TrackersState.failed()
       : loaded = true,
         failed = true,
         data = null;
@@ -35,21 +35,21 @@ class DeveloperData {
   DeveloperData(this.trackedDeveloper, this.changes);
 }
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
-
+class TrackersBloc extends Bloc<TrackersEvent, TrackersState> {
   final DbRepository dbRepository;
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
 
-  HomeBloc(this.dbRepository, this.purchaseRepository, this.serverRepository)
-      : super(HomeState.loading()) {
-    reloadPage();
+  TrackersBloc(this.dbRepository, this.purchaseRepository,
+      this.serverRepository)
+      : super(TrackersState.loading()) {
+    reload();
   }
 
   @override
-  Stream<HomeState> mapEventToState(HomeEvent event) async* {
-    if (event is ReloadPageEvent) {
-      yield HomeState.loading();
+  Stream<TrackersState> mapEventToState(TrackersEvent event) async* {
+    if (event is ReloadEvent) {
+      yield TrackersState.loading();
       yield await serverRepository.trackerProvider
           .get(purchaseRepository.getUserID())
           .then((response) {
@@ -57,17 +57,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         List<TrackedDeveloper> developers = response.developers;
         developers.sort((d1, d2) => d2.added.compareTo(d1.added));
         return dbRepository.getAllP().then((map) {
-          return HomeState.loaded(developers
-              .map((developer) => DeveloperData(developer, 0)).toList());
-        }).catchError((error) => HomeState.failed());
+          return TrackersState.loaded(developers
+              .map((developer) => DeveloperData(developer, developer.count))
+              .toList());
+        }).catchError((error) => TrackersState.failed());
       }).catchError((error) {
         print("Error: " + error.toString());
-        return HomeState.failed();
+        return TrackersState.failed();
       });
     }
   }
 
-  void reloadPage() {
-    add(ReloadPageEvent());
+  void reload() {
+    add(ReloadEvent());
   }
 }

@@ -15,16 +15,9 @@ class ServerRepositoryLoaded extends LoaderEvent {}
 
 abstract class LoaderState {}
 
-class RepositoriesLoading extends LoaderState {}
+class Loading extends LoaderState {}
 
-class RepositoriesLoaded extends LoaderState {
-  final DbRepository dbRepository;
-  final PurchaseRepository purchaseRepository;
-  final ServerRepository serverRepository;
-
-  RepositoriesLoaded(this.dbRepository, this.purchaseRepository,
-      this.serverRepository);
-}
+class Loaded extends LoaderState {}
 
 class LoaderBloc extends Bloc<LoaderEvent, LoaderState> {
   final DbRepository dbRepository;
@@ -42,7 +35,7 @@ class LoaderBloc extends Bloc<LoaderEvent, LoaderState> {
   bool _serverRepositoryLoaded;
 
   LoaderBloc(this.dbRepository, this.purchaseRepository, this.serverRepository)
-      : super(RepositoriesLoading()) {
+      : super(Loading()) {
     _dbRepositoryLoaded = false;
     _purchaseRepositoryLoaded = false;
     _serverRepositoryLoaded = false;
@@ -80,13 +73,12 @@ class LoaderBloc extends Bloc<LoaderEvent, LoaderState> {
     if (_dbRepositoryLoaded && _purchaseRepositoryLoaded &&
         _serverRepositoryLoaded) {
       print("All repositories loaded");
-      yield RepositoriesLoaded(
-          dbRepository, purchaseRepository, serverRepository);
+      yield Loaded();
     }
   }
 
   @override
-  Future<Function> close() {
+  Future<void> close() {
     _dbRepositoryStatusSubscription.cancel();
     _purchaseRepositoryStatusSubscription.cancel();
     _serverRepositoryStatusSubscription.cancel();
