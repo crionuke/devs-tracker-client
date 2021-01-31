@@ -59,8 +59,8 @@ class DeveloperCard extends StatelessWidget {
             SnackBar(content: Text(
                 "Tracker for "
                     "\"${developerData.trackedDeveloper.name}\" deleted!")));
+        context.read<TrackersBloc>().reload();
       }
-      context.read<TrackersBloc>().reload();
     });
   }
 }

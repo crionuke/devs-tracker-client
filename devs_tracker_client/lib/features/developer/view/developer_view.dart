@@ -28,10 +28,7 @@ class NoAppsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Container(child: Center(child: Text("No apps")))));
+    return Container(child: Center(child: Text("No apps")));
   }
 }
 
@@ -44,10 +41,7 @@ class AppsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child:
-        Padding(padding: const EdgeInsets.all(20),
-            child: ListView.builder(
+    return ListView.builder(
                 itemCount: apps.length,
                 itemBuilder: (context, index) {
                   DeveloperApp app = apps[index];
@@ -60,7 +54,7 @@ class AppsList extends StatelessWidget {
                       trailing: Icon(Icons.navigate_next),
                       onTap: () => _showApp(context, app)
                   );
-                })));
+                });
   }
 
   void _showApp(BuildContext context, DeveloperApp app) {

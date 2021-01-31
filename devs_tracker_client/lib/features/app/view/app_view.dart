@@ -23,10 +23,9 @@ class AppView extends StatelessWidget {
 class NoCountriesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Padding(
+    return Padding(
             padding: const EdgeInsets.all(20),
-            child: Container(child: Center(child: Text("No links")))));
+        child: Container(child: Center(child: Text("No links"))));
   }
 }
 
@@ -37,10 +36,7 @@ class CountriesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: ListView.builder(
+    return ListView.builder(
                 itemCount: links.length,
                 itemBuilder: (context, index) {
                   AppLink appLink = links[index];
@@ -53,6 +49,6 @@ class CountriesList extends StatelessWidget {
                       context.read<AppBloc>().openApp(appLink.url);
                     },
                   );
-                })));
+                });
   }
 }

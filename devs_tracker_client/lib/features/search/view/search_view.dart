@@ -9,8 +9,7 @@ class SearchPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LiquidView(child: SafeArea(
-      child: Padding(
+    return LiquidView(child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SearchBar<SearchDeveloper>(
             icon: Padding(
@@ -34,6 +33,6 @@ class SearchPageView extends StatelessWidget {
               );
             }),
       ),
-    ));
+    );
   }
 }

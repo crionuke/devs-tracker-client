@@ -10,21 +10,17 @@ class TrackersList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (developers.isEmpty) {
-      return SafeArea(
-          child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Container(child: Center(child: Text("No trackers")))));
+      return Container(child: Center(child: Text("No trackers")));
     } else {
       List cards =
           developers.map((developer) => TrackerCard(developer)).toList();
-      return SafeArea(
-          child: Padding(
-              padding: const EdgeInsets.all(20),
+      return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GridView.count(
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,
-                  children: cards)));
+                  children: cards));
     }
   }
 }
