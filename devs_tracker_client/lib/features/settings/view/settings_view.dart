@@ -1,5 +1,6 @@
 import 'package:devs_tracker_client/features/main/bloc/main_bloc.dart';
 import 'package:devs_tracker_client/features/settings/bloc/settings_bloc.dart';
+import 'package:devs_tracker_client/widgets/liquid_view.dart';
 import 'package:devs_tracker_client/widgets/loading_view.dart';
 import 'package:devs_tracker_client/widgets/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -22,14 +23,14 @@ class SettingsView extends StatelessWidget {
           body: BlocBuilder<SettingsBloc, SettingsState>(
               builder: (context, state) {
                 if (state.loaded) {
-                  return Column(
+                  return LiquidView(child: Column(
                       children: [
-                        ListTile(title: Text(state.data.version))
-                      ]);
+                        ListTile(title: Text("Version"),
+                            subtitle: Text(state.data.version))
+                      ]));
                 } else {
                   return LoadingView();
-                }
-                // Settings
+                } // Settings
               }),
           bottomNavigationBar: MainBottomNavigationBar(currentBar, mainBloc),
         )

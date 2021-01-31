@@ -1,5 +1,6 @@
 import 'package:devs_tracker_client/features/search/bloc/search_bloc.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/search_developer.dart';
+import 'package:devs_tracker_client/widgets/liquid_view.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,7 @@ class SearchPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return LiquidView(child: SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SearchBar<SearchDeveloper>(
@@ -33,6 +34,6 @@ class SearchPageView extends StatelessWidget {
               );
             }),
       ),
-    );
+    ));
   }
 }
