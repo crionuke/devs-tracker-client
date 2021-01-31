@@ -27,6 +27,15 @@ class App extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
+          theme: ThemeData(
+            cardTheme: CardTheme(shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            )),
+            buttonTheme: ButtonThemeData(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+          ),
           onGenerateRoute: (_) =>
               LoaderPage.route(
                   dbRepository, purchaseRepository, serverRepository),

@@ -7,8 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 abstract class AppEvent {}
 
-class ShowPageEvent extends AppEvent {
-  ShowPageEvent();
+class ReloadEvent extends AppEvent {
+  ReloadEvent();
 }
 
 abstract class AppState {
@@ -38,18 +38,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc(this.trackedDeveloper, this.developerApp, this.purchaseRepository,
       this.serverRepository)
       : super(LoadingState(trackedDeveloper, developerApp)) {
-    showPage();
+    Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
-    if (event is ShowPageEvent) {
+    if (event is ReloadEvent) {
       yield AppPageState(trackedDeveloper, developerApp);
     }
   }
 
-  void showPage() {
-    add(ShowPageEvent());
+  void reload() {
+    add(ReloadEvent());
   }
 
   void openApp(String url) {

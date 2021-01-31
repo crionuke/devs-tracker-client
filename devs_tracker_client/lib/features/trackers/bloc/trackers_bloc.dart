@@ -43,13 +43,14 @@ class TrackersBloc extends Bloc<TrackersEvent, TrackersState> {
   TrackersBloc(this.dbRepository, this.purchaseRepository,
       this.serverRepository)
       : super(TrackersState.loading()) {
-    reload();
+    Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
 
   @override
   Stream<TrackersState> mapEventToState(TrackersEvent event) async* {
     if (event is ReloadEvent) {
       yield TrackersState.loading();
+      await Future.delayed(Duration(milliseconds: 500));
       yield await serverRepository.trackerProvider
           .get(purchaseRepository.getUserID())
           .then((response) {
@@ -68,7 +69,7 @@ class TrackersBloc extends Bloc<TrackersEvent, TrackersState> {
     }
   }
 
-  void reload() {
+  void reload() async {
     add(ReloadEvent());
   }
 }

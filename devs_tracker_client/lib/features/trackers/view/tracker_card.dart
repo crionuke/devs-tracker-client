@@ -34,9 +34,6 @@ class DeveloperCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
         child: InkWell(
           onTap: () => _showDeveloper(context),
           child: Container(

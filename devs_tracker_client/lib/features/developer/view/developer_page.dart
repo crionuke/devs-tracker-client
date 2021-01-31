@@ -44,7 +44,7 @@ class DeveloperPage extends StatelessWidget {
               if (state.loaded) {
                 if (state.failed) {
                   return ErrorView(() =>
-                      context.read<DeveloperBloc>().reloadPage());
+                      context.read<DeveloperBloc>().reload());
                 } else {
                   return DeveloperView(state.data);
                 }

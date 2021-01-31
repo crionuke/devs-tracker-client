@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class SearchEvent {}
 
-class ResetPageEvent extends SearchEvent {}
+class ReloadEvent extends SearchEvent {}
 
 class DeveloperSelected extends SearchEvent {
 
@@ -58,12 +58,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   SearchBloc(this.purchaseRepository, this.serverRepository)
       : super(SearchState.loading()) {
-    resetPage();
+    Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    if (event is ResetPageEvent) {
+    if (event is ReloadEvent) {
       yield SearchState.initiated();
     } else if (event is DeveloperSelected) {
       yield SearchState.loading();
@@ -89,7 +89,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         .catchError((error) => throw Error());
   }
 
-  void resetPage() {
-    add(ResetPageEvent());
+  void reload() {
+    add(ReloadEvent());
   }
 }

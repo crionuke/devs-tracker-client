@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class DeveloperEvent {}
 
-class ReloadPageEvent extends DeveloperEvent {}
+class ReloadEvent extends DeveloperEvent {}
 
 class DeleteAppEvent extends DeveloperEvent {}
 
@@ -48,12 +48,12 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
   DeveloperBloc(
       this.trackedDeveloper, this.purchaseRepository, this.serverRepository)
       : super(DeveloperState.loading()) {
-    reloadPage();
+    Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
 
   @override
   Stream<DeveloperState> mapEventToState(DeveloperEvent event) async* {
-    if (event is ReloadPageEvent) {
+    if (event is ReloadEvent) {
       yield DeveloperState.loading();
       yield await serverRepository.developerProvider
           .getApps(purchaseRepository.getUserID(), trackedDeveloper.appleId)
@@ -81,8 +81,8 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
     }
   }
 
-  void reloadPage() {
-    add(ReloadPageEvent());
+  void reload() {
+    add(ReloadEvent());
   }
 
   void delete() {

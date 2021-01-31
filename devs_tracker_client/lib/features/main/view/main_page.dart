@@ -33,8 +33,8 @@ class MainPage extends StatelessWidget {
         children: [
           TrackersView(dbRepository, purchaseRepository, serverRepository,
               state.currentBar, context.select((MainBloc bloc) => bloc)),
-          SettingsView(
-              state.currentBar, context.select((MainBloc bloc) => bloc))
+          SettingsView(purchaseRepository, state.currentBar,
+              context.select((MainBloc bloc) => bloc))
         ],
       );
     });

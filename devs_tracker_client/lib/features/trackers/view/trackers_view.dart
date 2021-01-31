@@ -46,7 +46,8 @@ class TrackersView extends StatelessWidget {
                 builder: (context, state) {
               if (state.loaded) {
                 if (state.failed) {
-                  return ErrorView(() => context.read<TrackersBloc>().reload());
+                  return ErrorView(() =>
+                      context.read<TrackersBloc>().reload());
                 } else {
                   return TrackersList(state.data);
                 }

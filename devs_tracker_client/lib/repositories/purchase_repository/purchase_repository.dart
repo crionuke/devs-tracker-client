@@ -24,5 +24,37 @@ class PurchaseRepository {
 
   String getUserID() => _appUserID;
 
+  Future<Subscriptions> getSubscriptions() async {
+    Offerings offerings = await Purchases.getOfferings();
+    return Subscriptions(offerings.current);
+  }
+
   void dispose() => controller.close();
+}
+
+class Subscriptions {
+
+  final Subscription annual;
+  final Subscription monthly;
+
+  Subscriptions(Offering offering)
+      :
+        annual = Subscription(offering.annual.product),
+        monthly = Subscription(offering.monthly.product);
+}
+
+class Subscription {
+
+  final String title;
+  final String description;
+  final double price;
+  final String priceString;
+  final String currencyCode;
+
+  Subscription(Product product)
+      : title = product.title,
+        description = product.description,
+        price = product.price,
+        priceString = product.priceString,
+        currencyCode = product.currencyCode;
 }

@@ -26,7 +26,7 @@ class SettingsData {
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc() : super(SettingsState.loading()) {
-    reload();
+    Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
 
   @override

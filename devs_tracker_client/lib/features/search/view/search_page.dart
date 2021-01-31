@@ -32,7 +32,7 @@ class SearchPage extends StatelessWidget {
             return LoadingView();
           } else {
             if (state.failed) {
-              return ErrorView(() => context.read<SearchBloc>().resetPage());
+              return ErrorView(() => context.read<SearchBloc>().reload());
             } else {
               return SearchPageView();
             }
