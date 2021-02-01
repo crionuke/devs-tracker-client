@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
-class SubscriptionItem extends StatelessWidget {
-  final String title;
-  final String totalPrice;
-  final bool active;
+class PackageView extends StatelessWidget {
+  final Package package;
   final GestureTapCallback onTap;
-  final String description;
+  final bool selected;
 
-  SubscriptionItem(
-      {@required this.title,
-      @required this.totalPrice,
-      @required this.active,
-      @required this.onTap,
-      this.description});
+  PackageView({@required this.package,
+    @required this.onTap, @required this.selected});
 
   @override
   Widget build(BuildContext context) {
@@ -20,32 +15,29 @@ class SubscriptionItem extends StatelessWidget {
         width: 150,
         height: 200,
         child: Opacity(
-            opacity: active ? 1 : 0.3,
+            opacity: selected ? 1 : 0.3,
             child: Stack(
               alignment: Alignment.topCenter,
               children: [
                 PriceView(
-                    title: title,
-                    totalPrice: totalPrice,
-                    active: active,
+                    package: package,
+                    active: selected,
                     onTap: onTap),
-                description == null ? Container() : DescriptionView(description)
+                package.product.description == null
+                    ? Container()
+                    : DescriptionView(package.product.description)
               ],
             )));
   }
 }
 
 class PriceView extends StatelessWidget {
-  final String title;
-  final String totalPrice;
-  final bool active;
+  final Package package;
   final GestureTapCallback onTap;
+  final bool active;
 
-  PriceView(
-      {@required this.title,
-      @required this.totalPrice,
-      @required this.active,
-      @required this.onTap});
+  PriceView({@required this.package,
+    @required this.onTap, @required this.active});
 
   @override
   Widget build(BuildContext context) {
@@ -63,26 +55,26 @@ class PriceView extends StatelessWidget {
                             color: Theme.of(context).primaryColor,
                             child: Center(
                                 child: Text(
-                              title,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ))),
+                                  package.product.title,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ))),
                         Expanded(
                             child: Container(
                                 child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(totalPrice,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        )))
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(package.product.priceString,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                )))
                       ],
                     )),
                 clipper: ShapeBorderClipper(
