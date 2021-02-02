@@ -14,13 +14,12 @@ class TrackersList extends StatelessWidget {
     } else {
       List cards =
           developers.map((developer) => TrackerCard(developer)).toList();
-      return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.count(
-                  crossAxisCount: 2,
+      return GridView.count(
+          padding: const EdgeInsets.all(20),
+          crossAxisCount: 2,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,
-                  children: cards));
+          children: cards);
     }
   }
 }

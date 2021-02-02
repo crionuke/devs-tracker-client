@@ -33,10 +33,9 @@ class DeveloperCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: InkWell(
+    return InkWell(
           onTap: () => _showDeveloper(context),
-          child: Container(
+      child: Card(
               child: Center(
                 child: Text(
                   "${developerData.trackedDeveloper.name}\n"
@@ -44,7 +43,7 @@ class DeveloperCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               )),
-        ));
+    );
   }
 
   void _showDeveloper(BuildContext context) {
