@@ -69,7 +69,7 @@ class TrackersView extends StatelessWidget {
         .then((searchResult) {
       if (searchResult != null) {
         if (searchResult.errorId != null) {
-          if (searchResult.errorId == "limit_reached") {
+          if (searchResult.errorId == "free_limit_reached") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Text("Free trackers limit reached!"),
               action: SnackBarAction(
@@ -80,6 +80,10 @@ class TrackersView extends StatelessWidget {
                 },
               ),
             ));
+          } else if (searchResult.errorId == "max_limit_reached") {
+            scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text(
+                    "Sorry, max trackers limit reached!")));
           } else if (searchResult.errorId == "already_added") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: Text(

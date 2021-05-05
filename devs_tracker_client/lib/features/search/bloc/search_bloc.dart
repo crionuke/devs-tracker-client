@@ -52,7 +52,7 @@ class SearchResult {
 
   SearchResult.found(this.searchDeveloper) : errorId = null;
 
-  SearchResult.failed(this.errorId) : searchDeveloper = null;
+  SearchResult.failed(this.searchDeveloper, this.errorId);
 }
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -76,7 +76,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
               SearchState.finished(SearchResult.found(event.searchDeveloper)))
           .catchError((error) {
         if (error is DioError) {
-          return SearchState.finished(SearchResult.failed(
+          return SearchState.finished(SearchResult.failed(event.searchDeveloper,
               ErrorResponse.fromJson(error.response.data).id));
         } else {
           return SearchState.failed();
