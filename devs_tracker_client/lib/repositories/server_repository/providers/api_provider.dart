@@ -13,7 +13,7 @@ abstract class ApiProvider {
         receiveTimeout: 5000,
         receiveDataWhenStatusError: true,
         validateStatus: (status) =>
-        status >= 200 && status < 300 || status == 409,
+        status >= 200 && status < 300,
         headers: {"Authorization": "Bearer " + token});
   }
 }

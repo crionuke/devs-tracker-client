@@ -13,12 +13,11 @@ class TrackerProvider extends ApiProvider {
     return TrackedResponse.fromJson(response.data);
   }
 
-  Future<int> post(String token, int developerAppleId) async {
+  Future<void> post(String token, int developerAppleId) async {
     Response response = await dio.post("/" + developerAppleId.toString(),
         options: createRequestOptions(token));
     print("${response.request.method} to ${response.request.uri} finished "
         "statusCode=${response.statusCode}");
-    return response.statusCode;
   }
 
   Future<void> delete(String token, int developerAppleId) async {

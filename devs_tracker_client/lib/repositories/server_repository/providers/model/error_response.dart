@@ -1,9 +1,10 @@
 class ErrorResponse {
+  final String id;
   final String message;
 
-  ErrorResponse(this.message);
+  ErrorResponse(this.id, this.message);
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) {
-    return ErrorResponse(json["message"]);
+    return ErrorResponse(json["id"], json["message"]);
   }
 }

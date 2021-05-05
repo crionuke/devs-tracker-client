@@ -46,8 +46,7 @@ class TrackersView extends StatelessWidget {
                 builder: (context, state) {
               if (state.loaded) {
                 if (state.failed) {
-                  return ErrorView(() =>
-                      context.read<TrackersBloc>().reload());
+                  return ErrorView(() => context.read<TrackersBloc>().reload());
                 } else {
                   return TrackersList(state.data);
                 }
@@ -68,16 +67,19 @@ class TrackersView extends StatelessWidget {
             RepositoryProvider.of<ServerRepository>(context)))
         .then((searchResult) {
       if (searchResult != null) {
-        if (searchResult.statusCode == 201) {
+        if (searchResult.errorId != null) {
+          if (searchResult.errorId == "limit_reached") {
+            scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text("\"Free trackers limit reached, make subscription!")));
+          } else if (searchResult.errorId == "already_added") {
+            scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text(
+                    "\"${searchResult.searchDeveloper.name}\" already tracked!")));
+          }
+        } else {
           scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Text(
                   "Tracker for \"${searchResult.searchDeveloper.name}\" added!")));
-        } else if (searchResult.statusCode == 409) {
-          scaffoldKey.currentState.showSnackBar(SnackBar(
-              content: Text(
-                  "\"${searchResult.searchDeveloper.name}\" already tracked!")));
-        } else {
-          print("Got unknown statusCode=${searchResult.statusCode}");
         }
         context.read<TrackersBloc>().reload();
       }
