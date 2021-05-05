@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -15,25 +16,20 @@ public class RevenueCatEntitlement {
     private static final Logger logger = LoggerFactory.getLogger(RevenueCatEntitlement.class);
 
     @JsonProperty("expires_date")
-    private Timestamp expiresDate;
+    private Instant expiresDate;
 
     @JsonProperty("product_identifier")
     private String productIdentifier;
 
     @JsonProperty("purchase_date")
-    private Timestamp purchaseDate;
+    private Instant purchaseDate;
 
-    public Timestamp getExpiresDate() {
+    public Instant getExpiresDate() {
         return expiresDate;
     }
 
     public void setExpiresDate(String expiresDate) {
-        try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(expiresDate);
-            this.expiresDate = new Timestamp(date.getTime());
-        } catch (ParseException e) {
-            logger.warn(e.getMessage(), e);
-        }
+        this.expiresDate = Instant.parse(expiresDate);
     }
 
     public String getProductIdentifier() {
@@ -44,21 +40,16 @@ public class RevenueCatEntitlement {
         this.productIdentifier = productIdentifier;
     }
 
-    public Timestamp getPurchaseDate() {
+    public Instant getPurchaseDate() {
         return purchaseDate;
     }
 
     public void setPurchaseDate(String purchaseDate) {
-        try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(purchaseDate);
-            this.purchaseDate = new Timestamp(date.getTime());
-        } catch (ParseException e) {
-            logger.warn(e.getMessage(), e);
-        }
+        this.purchaseDate = Instant.parse(purchaseDate);
     }
 
     public boolean isActive() {
-        return expiresDate.after(new Date());
+        return expiresDate.compareTo(Instant.now()) > 0;
     }
 
     @Override
@@ -66,6 +57,6 @@ public class RevenueCatEntitlement {
         return getClass().getSimpleName() + "(expiresDate=" + expiresDate + ", " +
                 "productIdentifier=" + productIdentifier + ", " +
                 "purchaseDate=" + purchaseDate + ", " +
-                "isActive=" + isActive() + ")";
+                "isActive=" + isActive() + ", now=" + Instant.now() + ")";
     }
 }

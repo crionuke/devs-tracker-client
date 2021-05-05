@@ -27,7 +27,7 @@ public class SelectApp {
                     Timestamp releaseDate = resultSet.getTimestamp(3);
                     long developerId = resultSet.getLong(4);
                     app = new App(id, added, appleId, releaseDate, developerId);
-                    logger.debug("App selected, {}", app);
+                    logger.trace("App selected, {}", app);
                 } else {
                     throw new AppNotFoundException("App not found, " + "appleId=" + appleId);
                 }

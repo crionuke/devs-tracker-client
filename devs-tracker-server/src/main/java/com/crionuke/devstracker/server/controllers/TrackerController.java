@@ -9,6 +9,7 @@ import com.crionuke.devstracker.server.controllers.dto.TrackedResponse;
 import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
 import com.crionuke.devstracker.server.exceptions.ForbiddenRequestException;
 import com.crionuke.devstracker.server.exceptions.FreeTrackersLimitReachedException;
+import com.crionuke.devstracker.server.exceptions.MaxTrackersLimitReachedException;
 import com.crionuke.devstracker.server.services.TrackerService;
 import com.crionuke.devstracker.server.services.UserService;
 import org.slf4j.Logger;
@@ -76,6 +77,10 @@ public class TrackerController {
             logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(
                     FreeTrackersLimitReachedException.ID, e.getMessage()), HttpStatus.CONFLICT);
+        } catch (MaxTrackersLimitReachedException e) {
+            logger.info(e.getMessage());
+            return new ResponseEntity(new ErrorResponse(
+                    MaxTrackersLimitReachedException.ID, e.getMessage()), HttpStatus.CONFLICT);
         } catch (TrackerAlreadyAddedException e) {
             logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(

@@ -28,7 +28,7 @@ public class SelectLink {
                     String title = resultSet.getString(3);
                     String url = resultSet.getString(4);
                     link = new Link(id, added, appId, title, country, url);
-                    logger.debug("Link selected, {}", link);
+                    logger.trace("Link selected, {}", link);
                 } else {
                     throw new LinkNotFoundException("Link not found, " + "appId=" + appId + ", country=" + country);
                 }

@@ -10,6 +10,7 @@ import com.crionuke.devstracker.core.dto.User;
 import com.crionuke.devstracker.core.exceptions.*;
 import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
 import com.crionuke.devstracker.server.exceptions.FreeTrackersLimitReachedException;
+import com.crionuke.devstracker.server.exceptions.MaxTrackersLimitReachedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +26,16 @@ public class TrackerService {
     private static final Logger logger = LoggerFactory.getLogger(TrackerService.class);
 
     private final int freeTrackersLimit;
+    private final int maxTrackersLimit;
     private final DataSource dataSource;
     private final DeveloperService developerService;
     private final RevenueCatApi revenueCatApi;
 
     TrackerService(@Value("${devsTracker.freeTrackersLimit}") int freeTrackersLimit,
+                   @Value("${devsTracker.maxTrackersLimit}") int maxTrackersLimit,
                    DataSource dataSource, DeveloperService developerService, RevenueCatApi revenueCatApi) {
         this.freeTrackersLimit = freeTrackersLimit;
+        this.maxTrackersLimit = maxTrackersLimit;
         this.dataSource = dataSource;
         this.developerService = developerService;
         this.revenueCatApi = revenueCatApi;
@@ -51,7 +55,7 @@ public class TrackerService {
     }
 
     public void trackDeveloper(User user, long developerAppleId) throws
-            FreeTrackersLimitReachedException, DeveloperNotCachedException,
+            FreeTrackersLimitReachedException, MaxTrackersLimitReachedException, DeveloperNotCachedException,
             TrackerAlreadyAddedException, InternalServerException {
         // TODO: Check arguments
         try (Connection connection = dataSource.getConnection()) {
@@ -64,7 +68,11 @@ public class TrackerService {
                 if (!revenueCatResponse.hasActiveEntitlement() &&
                         countTrackers.getCount() >= freeTrackersLimit) {
                     throw new FreeTrackersLimitReachedException(
-                            "Free trackers limit reached, limit=" + freeTrackersLimit);
+                            "Free trackers limit reached, limit=" + freeTrackersLimit + ", user=" + user);
+                }
+                if (countTrackers.getCount() >= maxTrackersLimit) {
+                    throw new MaxTrackersLimitReachedException(
+                            "Max trackers limit reached, limit=" + maxTrackersLimit + ", user=" + user);
                 }
                 Developer developer = developerService.selectOrAddDeveloperFromCache(connection, developerAppleId);
                 InsertTracker insertTracker = new InsertTracker(connection, user.getId(), developer.getId());
