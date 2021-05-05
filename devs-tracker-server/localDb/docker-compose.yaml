@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  db:
+  devs-tracker-db:
     image: postgres:13
-    container_name: db
+    container_name: devs-tracker-db
     restart: always
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./db:/var/lib/postgresql/data
+      - ../src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./devs-tracker-db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:

@@ -50,7 +50,7 @@ public class DeveloperController {
             List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
             return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
         } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
@@ -69,10 +69,10 @@ public class DeveloperController {
             return new ResponseEntity(
                     new DeveloperAppsResponse(developerApps.size(), developerApps), HttpStatus.OK);
         } catch (DeveloperNotFoundException | TrackerForUpdateNotFoundException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);

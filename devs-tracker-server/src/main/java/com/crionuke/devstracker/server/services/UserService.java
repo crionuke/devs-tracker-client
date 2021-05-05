@@ -34,7 +34,7 @@ public class UserService {
         if (header == null || !header.startsWith(AUTH_HEADER_PREFIX)) {
             throw new ForbiddenRequestException(AUTH_HEADER_NAME + " header not found");
         } else {
-            String token = header.replace("Bearer ", "");
+            String token = header.replace(AUTH_HEADER_PREFIX, "");
             return getOrAddUser(token);
         }
     }

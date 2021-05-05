@@ -107,8 +107,8 @@ public class Checker {
                 }
                 UpdateCheck updateCheck = new UpdateCheck(connection, checkForUpdate.getId());
                 connection.commit();
+                logger.info("Handle {}", checkForUpdate);
             } catch (CheckForUpdateNotFoundException e) {
-                logger.info(e.getMessage());
                 rollbackNoException(connection);
             } catch (InternalServerException e) {
                 logger.warn(e.getMessage(), e);

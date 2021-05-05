@@ -2,10 +2,7 @@ package com.crionuke.devstracker.server.controllers;
 
 import com.crionuke.devstracker.core.dto.TrackedDeveloper;
 import com.crionuke.devstracker.core.dto.User;
-import com.crionuke.devstracker.core.exceptions.DeveloperNotFoundException;
-import com.crionuke.devstracker.core.exceptions.InternalServerException;
-import com.crionuke.devstracker.core.exceptions.TrackerAlreadyAddedException;
-import com.crionuke.devstracker.core.exceptions.TrackerNotFoundException;
+import com.crionuke.devstracker.core.exceptions.*;
 import com.crionuke.devstracker.server.controllers.dto.ErrorResponse;
 import com.crionuke.devstracker.server.controllers.dto.TrackedResponse;
 import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
@@ -46,7 +43,7 @@ public class TrackerController {
             return new ResponseEntity(
                     new TrackedResponse(trackedDevelopers.size(), trackedDevelopers), HttpStatus.OK);
         } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
@@ -65,13 +62,13 @@ public class TrackerController {
             trackerService.trackDeveloper(user, developerAppleId);
             return new ResponseEntity(HttpStatus.CREATED);
         } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (DeveloperNotCachedException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (TrackerAlreadyAddedException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.CONFLICT);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
@@ -89,13 +86,13 @@ public class TrackerController {
             trackerService.deleteTracker(user, developerAppleId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (ForbiddenRequestException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (DeveloperNotFoundException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NO_CONTENT);
         } catch (TrackerNotFoundException e) {
-            logger.info(e.getMessage(), e);
+            logger.info(e.getMessage());
             return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NO_CONTENT);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);

@@ -9,3 +9,6 @@ logging:
   level:
     root: WARN
     com.crionuke.devstracker: DEBUG
+api:
+  revenueCat:
+    secretKey: FPWcTjJxfXPvrBNdFfkvYgCqBsggmJyG

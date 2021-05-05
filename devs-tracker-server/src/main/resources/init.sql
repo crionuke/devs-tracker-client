@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS devstracker.users (
 );
 
 CREATE TABLE IF NOT EXISTS devstracker.trackers (
-    t_id BIGSERIAL PRIMARY KEY,
+    t_id BIGSERIAL PRIMARY KEY,s
     t_added TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     t_user_id BIGINT NOT NULL,
     t_developer_id BIGINT NOT NULL,

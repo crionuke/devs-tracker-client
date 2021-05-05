@@ -1,4 +1,4 @@
 .idea
 target/
-localdb/db
+localdb/devs-tracker-db
 *.iml
