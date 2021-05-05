@@ -58,7 +58,7 @@ public class RevenueCatEntitlement {
     }
 
     public boolean isActive() {
-        return expiresDate.before(new Date());
+        return expiresDate.after(new Date());
     }
 
     @Override
