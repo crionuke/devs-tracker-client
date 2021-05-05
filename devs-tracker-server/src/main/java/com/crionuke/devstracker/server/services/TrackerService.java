@@ -9,8 +9,10 @@ import com.crionuke.devstracker.core.dto.Tracker;
 import com.crionuke.devstracker.core.dto.User;
 import com.crionuke.devstracker.core.exceptions.*;
 import com.crionuke.devstracker.server.exceptions.DeveloperNotCachedException;
+import com.crionuke.devstracker.server.exceptions.FreeTrackersLimitReachedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -22,11 +24,14 @@ import java.util.List;
 public class TrackerService {
     private static final Logger logger = LoggerFactory.getLogger(TrackerService.class);
 
+    private final int freeTrackersLimit;
     private final DataSource dataSource;
     private final DeveloperService developerService;
     private final RevenueCatApi revenueCatApi;
 
-    TrackerService(DataSource dataSource, DeveloperService developerService, RevenueCatApi revenueCatApi) {
+    TrackerService(@Value("${devstracker.freeTrackersLimit}") int freeTrackersLimit,
+                   DataSource dataSource, DeveloperService developerService, RevenueCatApi revenueCatApi) {
+        this.freeTrackersLimit = freeTrackersLimit;
         this.dataSource = dataSource;
         this.developerService = developerService;
         this.revenueCatApi = revenueCatApi;
@@ -46,7 +51,8 @@ public class TrackerService {
     }
 
     public void trackDeveloper(User user, long developerAppleId) throws
-            DeveloperNotCachedException, TrackerAlreadyAddedException, InternalServerException {
+            FreeTrackersLimitReachedException, DeveloperNotCachedException,
+            TrackerAlreadyAddedException, InternalServerException {
         // TODO: Check arguments
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
@@ -55,12 +61,18 @@ public class TrackerService {
                 RevenueCatResponse revenueCatResponse = revenueCatApi.getSubscriber(appUserId).block();
                 logger.debug("Got subscriber, {}", revenueCatResponse);
                 CountTrackers countTrackers = new CountTrackers(connection, user.getId());
+                if (!revenueCatResponse.hasActiveEntitlement() &&
+                        countTrackers.getCount() >= freeTrackersLimit) {
+                    throw new FreeTrackersLimitReachedException(
+                            "Free trackers limit reached, limit=" + freeTrackersLimit);
+                }
                 Developer developer = developerService.selectOrAddDeveloperFromCache(connection, developerAppleId);
                 InsertTracker insertTracker = new InsertTracker(connection, user.getId(), developer.getId());
                 Tracker tracker = insertTracker.getTracker();
                 // Commit
                 connection.commit();
-            } catch (DeveloperNotCachedException | TrackerAlreadyAddedException | InternalServerException e) {
+            } catch (FreeTrackersLimitReachedException | DeveloperNotCachedException |
+                    TrackerAlreadyAddedException | InternalServerException e) {
                 rollbackNoException(connection);
                 throw e;
             }

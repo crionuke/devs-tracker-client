@@ -1,10 +1,16 @@
 package com.crionuke.devstracker.server.controllers.dto;
 
 public class ErrorResponse {
+    private final String id;
     private final String message;
 
-    public ErrorResponse(String message) {
+    public ErrorResponse(String id, String message) {
+        this.id = id;
         this.message = message;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getMessage() {

@@ -1,6 +1,7 @@
 package com.crionuke.devstracker.core.exceptions;
 
 public class InternalServerException extends Exception {
+    static public final String ID = "internal_server_error";
 
     public InternalServerException(String message) {
         super(message);

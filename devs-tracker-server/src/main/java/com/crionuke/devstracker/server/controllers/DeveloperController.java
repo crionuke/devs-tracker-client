@@ -51,10 +51,12 @@ public class DeveloperController {
             return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
         } catch (ForbiddenRequestException e) {
             logger.info(e.getMessage());
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+            return new ResponseEntity(new ErrorResponse(
+                    ForbiddenRequestException.ID, e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ErrorResponse(
+                    InternalServerException.ID, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -68,15 +70,21 @@ public class DeveloperController {
             List<DeveloperApp> developerApps = developerService.getDeveloperApps(user, developerAppleId);
             return new ResponseEntity(
                     new DeveloperAppsResponse(developerApps.size(), developerApps), HttpStatus.OK);
-        } catch (DeveloperNotFoundException | TrackerForUpdateNotFoundException e) {
+        } catch (DeveloperNotFoundException e) {
             logger.info(e.getMessage());
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(new ErrorResponse(
+                    DeveloperNotFoundException.ID, e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (TrackerForUpdateNotFoundException e) {
+            logger.info(e.getMessage());
+            return new ResponseEntity(new ErrorResponse(
+                    TrackerForUpdateNotFoundException.ID, e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (ForbiddenRequestException e) {
             logger.info(e.getMessage());
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
+            return new ResponseEntity(new ErrorResponse(
+                    ForbiddenRequestException.ID, e.getMessage()), HttpStatus.FORBIDDEN);
         } catch (InternalServerException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity(new ErrorResponse(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(new ErrorResponse(InternalServerException.ID, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
