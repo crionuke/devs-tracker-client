@@ -68,8 +68,8 @@ class TrackersView extends StatelessWidget {
             RepositoryProvider.of<ServerRepository>(context)))
         .then((searchResult) {
       if (searchResult != null) {
-        if (searchResult.errorId != null) {
-          if (searchResult.errorId == "free_limit_reached") {
+        if (searchResult.error != null) {
+          if (searchResult.error == "free_limit_reached") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
               content: Text("Free trackers limit reached!"),
               action: SnackBarAction(
@@ -80,11 +80,11 @@ class TrackersView extends StatelessWidget {
                 },
               ),
             ));
-          } else if (searchResult.errorId == "max_limit_reached") {
+          } else if (searchResult.error == "max_limit_reached") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: Text(
                     "Sorry, max trackers limit reached!")));
-          } else if (searchResult.errorId == "already_added") {
+          } else if (searchResult.error == "already_added") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: Text(
                     "\"${searchResult.searchDeveloper.name}\" already tracked!")));

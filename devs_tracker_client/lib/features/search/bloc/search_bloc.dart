@@ -47,12 +47,12 @@ class SearchState {
 }
 
 class SearchResult {
-  final String errorId;
+  final String error;
   final SearchDeveloper searchDeveloper;
 
-  SearchResult.found(this.searchDeveloper) : errorId = null;
+  SearchResult.found(this.searchDeveloper) : error = null;
 
-  SearchResult.failed(this.searchDeveloper, this.errorId);
+  SearchResult.failed(this.searchDeveloper, this.error);
 }
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {

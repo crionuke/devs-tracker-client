@@ -1,6 +1,7 @@
 import 'package:devs_tracker_client/features/loader/view/loader_page.dart';
 import 'package:devs_tracker_client/repositories/db_repository/db_repository.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +10,10 @@ class App extends StatelessWidget {
   final DbRepository dbRepository;
   final ServerRepository serverRepository;
   final PurchaseRepository purchaseRepository;
+  final PushRepository pushRepository;
 
-  App(this.dbRepository, this.purchaseRepository, this.serverRepository);
+  App(this.dbRepository, this.purchaseRepository, this.serverRepository,
+      this.pushRepository);
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +28,14 @@ class App extends StatelessWidget {
           RepositoryProvider<ServerRepository>(
             create: (context) => serverRepository,
           ),
+          RepositoryProvider<PushRepository>(
+            create: (context) => pushRepository,
+          ),
         ],
         child: MaterialApp(
           theme: ThemeData(
-            cardTheme: CardTheme(shape: RoundedRectangleBorder(
+            cardTheme: CardTheme(
+                shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             )),
             buttonTheme: ButtonThemeData(
@@ -36,10 +43,8 @@ class App extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20)),
             ),
           ),
-          onGenerateRoute: (_) =>
-              LoaderPage.route(
-                  dbRepository, purchaseRepository, serverRepository),
-        )
-    );
+          onGenerateRoute: (_) => LoaderPage.route(dbRepository,
+              purchaseRepository, serverRepository, pushRepository),
+        ));
   }
 }
