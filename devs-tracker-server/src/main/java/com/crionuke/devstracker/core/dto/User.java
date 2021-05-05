@@ -30,6 +30,6 @@ public class User {
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=\"" + added + "\", " +
-                "token=\"" + token + "\")";
+                "token=\"" + "..." + token.substring(token.length() / 2) + "\")";
     }
 }

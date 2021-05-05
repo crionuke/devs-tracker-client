@@ -20,7 +20,7 @@ public class RevenueCatApi {
 
     public RevenueCatApi(@Value("${api.revenueCat.secretKey}") String secretKey) {
         this.secretKey = secretKey;
-        logger.info("Initialized, secretKey={}", secretKey);
+        logger.info("Initialized, secretKey=\"{}\"", "..." + secretKey.substring(secretKey.length() / 2));
     }
 
     public Mono<RevenueCatResponse> getSubscriber(String appUserId) {
