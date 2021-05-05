@@ -1,5 +1,6 @@
 import 'package:devs_tracker_client/features/main/bloc/main_bloc.dart';
 import 'package:devs_tracker_client/features/search/view/search_page.dart';
+import 'package:devs_tracker_client/features/subscriptions/view/subscriptions_page.dart';
 import 'package:devs_tracker_client/features/trackers/bloc/trackers_bloc.dart';
 import 'package:devs_tracker_client/features/trackers/view/trackers_list.dart';
 import 'package:devs_tracker_client/repositories/db_repository/db_repository.dart';
@@ -70,7 +71,15 @@ class TrackersView extends StatelessWidget {
         if (searchResult.errorId != null) {
           if (searchResult.errorId == "limit_reached") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text("\"Free trackers limit reached, make subscription!")));
+              content: Text("Free trackers limit reached!"),
+              action: SnackBarAction(
+                label: "Subscribe!",
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(SubscriptionsPage.route(purchaseRepository));
+                },
+              ),
+            ));
           } else if (searchResult.errorId == "already_added") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: Text(
