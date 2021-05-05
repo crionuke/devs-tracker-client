@@ -3,11 +3,15 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 class PackageView extends StatelessWidget {
   final Package package;
+  final String description;
   final GestureTapCallback onTap;
   final bool selected;
 
-  PackageView({@required this.package,
-    @required this.onTap, @required this.selected});
+  PackageView(
+      {@required this.package,
+      @required this.description,
+      @required this.onTap,
+      @required this.selected});
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +23,10 @@ class PackageView extends StatelessWidget {
             child: Stack(
               alignment: Alignment.topCenter,
               children: [
-                PriceView(
-                    package: package,
-                    active: selected,
-                    onTap: onTap),
-                package.product.description == null
+                PriceView(package: package, active: selected, onTap: onTap),
+                description == null
                     ? Container()
-                    : DescriptionView(package.product.description)
+                    : DescriptionView(description)
               ],
             )));
   }
@@ -36,8 +37,8 @@ class PriceView extends StatelessWidget {
   final GestureTapCallback onTap;
   final bool active;
 
-  PriceView({@required this.package,
-    @required this.onTap, @required this.active});
+  PriceView(
+      {@required this.package, @required this.onTap, @required this.active});
 
   @override
   Widget build(BuildContext context) {
@@ -55,26 +56,26 @@ class PriceView extends StatelessWidget {
                             color: Theme.of(context).primaryColor,
                             child: Center(
                                 child: Text(
-                                  package.product.title,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ))),
+                              package.product.title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ))),
                         Expanded(
                             child: Container(
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(package.product.priceString,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                )))
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(package.product.priceString,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        )))
                       ],
                     )),
                 clipper: ShapeBorderClipper(

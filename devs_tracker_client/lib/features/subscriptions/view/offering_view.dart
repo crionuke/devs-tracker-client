@@ -37,6 +37,7 @@ class OfferingView extends StatelessWidget {
                 ),
                 PackageView(
                   package: offering.annual,
+                  description: offering.annual.product.description,
                   onTap: () => context
                       .read<OfferingBloc>()
                       .selectPackage(offering.annual),
