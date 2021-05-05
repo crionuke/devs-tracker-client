@@ -44,7 +44,7 @@ public class CheckForUpdate {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "country=" + country + ", " +
                 "priority=" + priority + ", " +
-                "lastCheck=\"" + lastCheck + "\"" +
+                "lastCheck=\"" + lastCheck + "\", " +
                 "developer=" + developer + ")";
     }
 }
