@@ -29,7 +29,7 @@ public class TrackerService {
     private final DeveloperService developerService;
     private final RevenueCatApi revenueCatApi;
 
-    TrackerService(@Value("${devstracker.freeTrackersLimit}") int freeTrackersLimit,
+    TrackerService(@Value("${devsTracker.freeTrackersLimit}") int freeTrackersLimit,
                    DataSource dataSource, DeveloperService developerService, RevenueCatApi revenueCatApi) {
         this.freeTrackersLimit = freeTrackersLimit;
         this.dataSource = dataSource;

@@ -9,7 +9,7 @@ logging:
   level:
     root: WARN
     com.crionuke.devstracker: INFO
-devstracker:
+devsTracker:
   freeTrackersLimit: 2
 api:
   revenueCat:
