@@ -53,6 +53,7 @@ public class Checker {
             try {
                 SelectCheckForUpdate selectCheckForUpdate = new SelectCheckForUpdate(connection);
                 CheckForUpdate checkForUpdate = selectCheckForUpdate.getCheckForUpdate();
+                logger.info("Handle {}", checkForUpdate);
                 Developer developer = checkForUpdate.getDeveloper();
                 // Lookup developer for apps
                 List<SearchApp> apps = appleApi
@@ -107,7 +108,6 @@ public class Checker {
                 }
                 UpdateCheck updateCheck = new UpdateCheck(connection, checkForUpdate.getId());
                 connection.commit();
-                logger.info("Handle {}", checkForUpdate);
             } catch (CheckForUpdateNotFoundException e) {
                 rollbackNoException(connection);
             } catch (InternalServerException e) {
