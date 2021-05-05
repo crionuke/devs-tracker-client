@@ -42,11 +42,11 @@ public class DeveloperController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SearchResponse> search(@RequestHeader HttpHeaders headers,
                                                  @RequestBody SearchRequest request) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Search developer, {}", request);
-        }
         try {
             User user = userService.authenticate(headers);
+            if (logger.isInfoEnabled()) {
+                logger.info("Search developer, {}, user={}", request, user);
+            }
             List<SearchDeveloper> searchDevelopers = developerService.search(request.getCountries(), request.getTerm());
             return new ResponseEntity(new SearchResponse(searchDevelopers.size(), searchDevelopers), HttpStatus.OK);
         } catch (ForbiddenRequestException e) {
@@ -62,11 +62,11 @@ public class DeveloperController {
 
     @GetMapping(value = "{developerAppleId}/apps")
     public ResponseEntity getApps(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Get developer's apps, developerAppleId={}", developerAppleId);
-        }
         try {
             User user = userService.authenticate(headers);
+            if (logger.isInfoEnabled()) {
+                logger.info("Get developer's apps, developerAppleId={}, user={}", developerAppleId, user);
+            }
             List<DeveloperApp> developerApps = developerService.getDeveloperApps(user, developerAppleId);
             return new ResponseEntity(
                     new DeveloperAppsResponse(developerApps.size(), developerApps), HttpStatus.OK);

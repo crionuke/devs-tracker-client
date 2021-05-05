@@ -35,11 +35,11 @@ public class TrackerController {
 
     @GetMapping
     public ResponseEntity get(@RequestHeader HttpHeaders headers) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Get trackers");
-        }
         try {
             User user = userService.authenticate(headers);
+            if (logger.isInfoEnabled()) {
+                logger.info("Get trackers, user={}", user);
+            }
             List<TrackedDeveloper> trackedDevelopers = trackerService.getDevelopers(user);
             logger.debug("List has {} tracked developers, {}", trackedDevelopers.size(), trackedDevelopers);
             return new ResponseEntity(
@@ -57,11 +57,11 @@ public class TrackerController {
 
     @PostMapping(value = "/{developerAppleId}")
     public ResponseEntity post(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Post tracker, developerAppleId={}", developerAppleId);
-        }
         try {
             User user = userService.authenticate(headers);
+            if (logger.isInfoEnabled()) {
+                logger.info("Post tracker, developerAppleId={}, user={}", developerAppleId, user);
+            }
             trackerService.trackDeveloper(user, developerAppleId);
             return new ResponseEntity(HttpStatus.CREATED);
         } catch (ForbiddenRequestException e) {
@@ -89,11 +89,11 @@ public class TrackerController {
 
     @DeleteMapping(value = "/{developerAppleId}")
     public ResponseEntity delete(@RequestHeader HttpHeaders headers, @PathVariable long developerAppleId) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Delete tracker, developerAppleId={}", developerAppleId);
-        }
         try {
             User user = userService.authenticate(headers);
+            if (logger.isInfoEnabled()) {
+                logger.info("Delete tracker, developerAppleId={}, user={}", developerAppleId, user);
+            }
             trackerService.deleteTracker(user, developerAppleId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (ForbiddenRequestException e) {

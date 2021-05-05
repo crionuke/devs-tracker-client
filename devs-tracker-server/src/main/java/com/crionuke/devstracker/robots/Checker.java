@@ -23,20 +23,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-@EnableScheduling
-@SpringBootApplication
-@ComponentScan("com.crionuke.devstracker.robots")
-@ComponentScan("com.crionuke.devstracker.core")
 public class Checker {
     private static final Logger logger = LoggerFactory.getLogger(Checker.class);
-
-    static {
-        System.setProperty("spring.profiles.active", "checker");
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(Checker.class, args);
-    }
 
     private final DataSource dataSource;
     private final AppleApi appleApi;
@@ -53,7 +41,7 @@ public class Checker {
             try {
                 SelectCheckForUpdate selectCheckForUpdate = new SelectCheckForUpdate(connection);
                 CheckForUpdate checkForUpdate = selectCheckForUpdate.getCheckForUpdate();
-                logger.info("Handle {}", checkForUpdate);
+                logger.debug("Handle {}", checkForUpdate);
                 Developer developer = checkForUpdate.getDeveloper();
                 // Lookup developer for apps
                 List<SearchApp> apps = appleApi

@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8080
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/devstracker
@@ -9,3 +9,8 @@ logging:
   level:
     root: WARN
     com.crionuke.devstracker: INFO
+devstracker:
+  freeTrackersLimit: 2
+api:
+  revenueCat:
+    secretKey: FPWcTjJxfXPvrBNdFfkvYgCqBsggmJyG
