@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Component
-@ConditionalOnProperty(prefix = "api.revenueCat", name = "secretKey")
 public class RevenueCatApi {
     private static final Logger logger = LoggerFactory.getLogger(RevenueCatApi.class);
 

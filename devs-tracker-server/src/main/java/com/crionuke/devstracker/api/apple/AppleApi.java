@@ -21,6 +21,10 @@ public class AppleApi {
     private static final int SEARCH_LIMIT = 10;
     private static final int LOOKUP_LIMIT = 200;
 
+    public AppleApi() {
+        logger.info("Initialized, url={}", BASE_URL);
+    }
+
     public Flux<AppleResponse> searchDeveloper(List<String> countries, String term) {
         return Flux.fromIterable(countries)
                 .flatMap(country -> searchDeveloperForCountry(term, country));

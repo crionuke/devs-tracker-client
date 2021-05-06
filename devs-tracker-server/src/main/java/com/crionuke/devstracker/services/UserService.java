@@ -2,6 +2,7 @@ package com.crionuke.devstracker.services;
 
 import com.crionuke.devstracker.actions.InsertUser;
 import com.crionuke.devstracker.actions.SelectUser;
+import com.crionuke.devstracker.actions.UpdateUserDevice;
 import com.crionuke.devstracker.actions.dto.User;
 import com.crionuke.devstracker.exceptions.ForbiddenRequestException;
 import com.crionuke.devstracker.exceptions.InternalServerException;
@@ -22,6 +23,7 @@ public class UserService {
 
     private static final String AUTH_HEADER_NAME = "Authorization";
     private static final String AUTH_HEADER_PREFIX = "Bearer ";
+    private static final String DEVICE_HEADER_NAME = "Device";
 
     private final DataSource dataSource;
 
@@ -35,18 +37,29 @@ public class UserService {
             throw new ForbiddenRequestException(AUTH_HEADER_NAME + " header not found");
         } else {
             String token = header.replace(AUTH_HEADER_PREFIX, "");
-            return getOrAddUser(token);
+            String device = headers.getFirst(DEVICE_HEADER_NAME);
+            if (device == null) {
+                throw new ForbiddenRequestException(DEVICE_HEADER_NAME + " header not found");
+            }
+            return handleUser(token, device);
         }
     }
 
-    private User getOrAddUser(String token) throws InternalServerException {
+    private User handleUser(String token, String device) throws InternalServerException {
         try (Connection connection = dataSource.getConnection()) {
             try {
                 SelectUser selectUser = new SelectUser(connection, token);
-                return selectUser.getUser();
+                // Update device if changed
+                if (!selectUser.getUser().getDevice().equals(device)) {
+                    UpdateUserDevice updateUserDevice =
+                            new UpdateUserDevice(connection, selectUser.getUser(), device);
+                    return updateUserDevice.getUpdatedUser();
+                } else {
+                    return selectUser.getUser();
+                }
             } catch (UserNotFoundException e1) {
                 try {
-                    InsertUser insertUser = new InsertUser(connection, token);
+                    InsertUser insertUser = new InsertUser(connection, token, device);
                     return insertUser.getUser();
                 } catch (UserAlreadyAddedException e2) {
                     try {

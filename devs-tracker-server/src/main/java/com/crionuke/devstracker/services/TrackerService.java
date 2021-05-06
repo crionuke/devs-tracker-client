@@ -5,6 +5,7 @@ import com.crionuke.devstracker.actions.dto.Developer;
 import com.crionuke.devstracker.actions.dto.TrackedDeveloper;
 import com.crionuke.devstracker.actions.dto.Tracker;
 import com.crionuke.devstracker.actions.dto.User;
+import com.crionuke.devstracker.api.firebase.FirebaseApi;
 import com.crionuke.devstracker.api.revenueCat.RevenueCatApi;
 import com.crionuke.devstracker.api.revenueCat.dto.RevenueCatResponse;
 import com.crionuke.devstracker.exceptions.*;
@@ -27,15 +28,18 @@ public class TrackerService {
     private final DataSource dataSource;
     private final DeveloperService developerService;
     private final RevenueCatApi revenueCatApi;
+    private final FirebaseApi firebaseApi;
 
     TrackerService(@Value("${devsTracker.freeTrackersLimit}") int freeTrackersLimit,
                    @Value("${devsTracker.maxTrackersLimit}") int maxTrackersLimit,
-                   DataSource dataSource, DeveloperService developerService, RevenueCatApi revenueCatApi) {
+                   DataSource dataSource, DeveloperService developerService, RevenueCatApi revenueCatApi,
+                   FirebaseApi firebaseApi) {
         this.freeTrackersLimit = freeTrackersLimit;
         this.maxTrackersLimit = maxTrackersLimit;
         this.dataSource = dataSource;
         this.developerService = developerService;
         this.revenueCatApi = revenueCatApi;
+        this.firebaseApi = firebaseApi;
     }
 
     public List<TrackedDeveloper> getDevelopers(User user) throws InternalServerException {

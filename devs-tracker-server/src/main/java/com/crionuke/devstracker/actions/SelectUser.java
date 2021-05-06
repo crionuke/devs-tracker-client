@@ -11,7 +11,7 @@ import java.sql.*;
 public class SelectUser {
     private static final Logger logger = LoggerFactory.getLogger(SelectUser.class);
 
-    private final String SELECT_SQL = "SELECT u_id, u_added FROM users WHERE u_token = ?";
+    private final String SELECT_SQL = "SELECT u_id, u_added, u_device FROM users WHERE u_token = ?";
 
     private final User user;
 
@@ -24,7 +24,8 @@ public class SelectUser {
                 if (resultSet.next()) {
                     long id = resultSet.getLong(1);
                     Timestamp added = resultSet.getTimestamp(2);
-                    user = new User(id, added, token);
+                    String device = resultSet.getString(3);
+                    user = new User(id, added, token, device);
                     logger.debug("User selected, {}", user);
                 } else {
                     throw new UserNotFoundException("User not found, token=" + token);
