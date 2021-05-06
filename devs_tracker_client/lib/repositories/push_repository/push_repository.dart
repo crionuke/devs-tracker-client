@@ -17,7 +17,6 @@ class PushRepository {
     await requestPermission();
     String deviceToken = await getDeviceToken();
     print("DeviceToken=$deviceToken");
-    messaging.onTokenRefresh.listen((event) { });
     yield PushRepositoryStatus.loaded;
   }
 
