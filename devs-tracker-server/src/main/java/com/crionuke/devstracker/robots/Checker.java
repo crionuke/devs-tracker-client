@@ -1,18 +1,14 @@
 package com.crionuke.devstracker.robots;
 
-import com.crionuke.devstracker.core.actions.*;
-import com.crionuke.devstracker.core.api.apple.AppleApi;
-import com.crionuke.devstracker.core.dto.App;
-import com.crionuke.devstracker.core.dto.CheckForUpdate;
-import com.crionuke.devstracker.core.dto.Developer;
-import com.crionuke.devstracker.core.dto.SearchApp;
-import com.crionuke.devstracker.core.exceptions.*;
+import com.crionuke.devstracker.actions.*;
+import com.crionuke.devstracker.actions.dto.App;
+import com.crionuke.devstracker.actions.dto.CheckForUpdate;
+import com.crionuke.devstracker.actions.dto.Developer;
+import com.crionuke.devstracker.actions.dto.SearchApp;
+import com.crionuke.devstracker.api.apple.AppleApi;
+import com.crionuke.devstracker.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -53,7 +49,7 @@ public class Checker {
                                         result.getTrackViewUrl(), result.getReleaseDate()))
                         .collectList()
                         .block();
-                logger.debug("Apps, developerId={}, {}", developer.getId(), apps);
+                logger.debug("Lookup developer, developerId={}, {}", developer.getId(), apps);
                 for (SearchApp searchApp : apps) {
                     App app;
                     try {
