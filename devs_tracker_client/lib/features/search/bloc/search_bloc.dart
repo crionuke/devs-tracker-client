@@ -1,4 +1,5 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/error_response.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/search_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
@@ -58,8 +59,10 @@ class SearchResult {
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
+  final PushRepository pushRepository;
 
-  SearchBloc(this.purchaseRepository, this.serverRepository)
+  SearchBloc(
+      this.purchaseRepository, this.serverRepository, this.pushRepository)
       : super(SearchState.loading()) {
     Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
@@ -71,7 +74,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     } else if (event is DeveloperSelected) {
       yield SearchState.loading();
       yield await serverRepository.trackerProvider
-          .post(purchaseRepository.getUserID(), event.searchDeveloper.appleId)
+          .post(purchaseRepository.getUserID(), pushRepository.getDeviceToken(),
+              event.searchDeveloper.appleId)
           .then((_) =>
               SearchState.finished(SearchResult.found(event.searchDeveloper)))
           .catchError((error) {
@@ -91,7 +95,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   Future<List<SearchDeveloper>> search(String term) async {
     return await serverRepository.developerProvider
-        .search(purchaseRepository.getUserID(), term)
+        .search(purchaseRepository.getUserID(), pushRepository.getDeviceToken(),
+            term)
         .then((response) => response.developers)
         .catchError((error) => throw Error());
   }

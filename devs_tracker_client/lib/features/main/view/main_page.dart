@@ -35,8 +35,13 @@ class MainPage extends StatelessWidget {
       return IndexedStack(
         index: state.currentBar,
         children: [
-          TrackersView(dbRepository, purchaseRepository, serverRepository,
-              state.currentBar, context.select((MainBloc bloc) => bloc)),
+          TrackersView(
+              dbRepository,
+              purchaseRepository,
+              serverRepository,
+              pushRepository,
+              state.currentBar,
+              context.select((MainBloc bloc) => bloc)),
           SettingsView(purchaseRepository, state.currentBar,
               context.select((MainBloc bloc) => bloc))
         ],

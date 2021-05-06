@@ -1,5 +1,6 @@
 import 'package:devs_tracker_client/repositories/db_repository/db_repository.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,9 +40,10 @@ class TrackersBloc extends Bloc<TrackersEvent, TrackersState> {
   final DbRepository dbRepository;
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
+  final PushRepository pushRepository;
 
   TrackersBloc(this.dbRepository, this.purchaseRepository,
-      this.serverRepository)
+      this.serverRepository, this.pushRepository)
       : super(TrackersState.loading()) {
     Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
@@ -52,7 +54,7 @@ class TrackersBloc extends Bloc<TrackersEvent, TrackersState> {
       yield TrackersState.loading();
       await Future.delayed(Duration(milliseconds: 500));
       yield await serverRepository.trackerProvider
-          .get(purchaseRepository.getUserID())
+          .get(purchaseRepository.getUserID(), pushRepository.getDeviceToken())
           .then((response) {
         print("Trackers loaded, $response");
         List<TrackedDeveloper> developers = response.developers;

@@ -1,4 +1,5 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
@@ -44,9 +45,10 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
   final TrackedDeveloper trackedDeveloper;
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
+  final PushRepository pushRepository;
 
-  DeveloperBloc(
-      this.trackedDeveloper, this.purchaseRepository, this.serverRepository)
+  DeveloperBloc(this.trackedDeveloper, this.purchaseRepository,
+      this.serverRepository, this.pushRepository)
       : super(DeveloperState.loading()) {
     Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
@@ -56,7 +58,8 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
     if (event is ReloadEvent) {
       yield DeveloperState.loading();
       yield await serverRepository.developerProvider
-          .getApps(purchaseRepository.getUserID(), trackedDeveloper.appleId)
+          .getApps(purchaseRepository.getUserID(),
+              pushRepository.getDeviceToken(), trackedDeveloper.appleId)
           .then((response) {
         print("Apps loaded, $response");
         List<DeveloperApp> data = response.apps;
@@ -69,12 +72,12 @@ class DeveloperBloc extends Bloc<DeveloperEvent, DeveloperState> {
     } else if (event is DeleteAppEvent) {
       yield DeveloperState.loading();
       yield await serverRepository.trackerProvider
-          .delete(purchaseRepository.getUserID(), trackedDeveloper.appleId)
+          .delete(purchaseRepository.getUserID(),
+              pushRepository.getDeviceToken(), trackedDeveloper.appleId)
           .then((_) {
         print("Developer deleted");
         return DeveloperState.deleted();
-      })
-          .catchError((error) {
+      }).catchError((error) {
         print("Error: " + error.toString());
         return DeveloperState.failed();
       });

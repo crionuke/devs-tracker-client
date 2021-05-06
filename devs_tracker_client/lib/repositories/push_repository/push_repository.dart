@@ -8,6 +8,8 @@ class PushRepository {
   final StreamController controller;
   final FirebaseMessaging messaging;
 
+  String _deviceToken;
+
   PushRepository()
       : controller = StreamController<PushRepositoryStatus>(),
         messaging = FirebaseMessaging.instance;
@@ -15,12 +17,14 @@ class PushRepository {
   Stream<PushRepositoryStatus> get status async* {
     yield PushRepositoryStatus.loading;
     await requestPermission();
-    String deviceToken = await getDeviceToken();
-    print("DeviceToken=$deviceToken");
+    _deviceToken = await requestDeviceToken();
+    print("DeviceToken=$_deviceToken");
     yield PushRepositoryStatus.loaded;
   }
 
   void dispose() => controller.close();
+
+  String getDeviceToken() => _deviceToken;
 
   Future<void> requestPermission() async {
     NotificationSettings settings = await messaging.requestPermission(
@@ -43,7 +47,7 @@ class PushRepository {
     }
   }
 
-  Future<String> getDeviceToken() async {
+  Future<String> requestDeviceToken() async {
     return messaging.getToken();
   }
 }

@@ -5,6 +5,7 @@ import 'package:devs_tracker_client/features/trackers/bloc/trackers_bloc.dart';
 import 'package:devs_tracker_client/features/trackers/view/trackers_list.dart';
 import 'package:devs_tracker_client/repositories/db_repository/db_repository.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:devs_tracker_client/widgets/error_view.dart';
 import 'package:devs_tracker_client/widgets/loading_view.dart';
@@ -18,18 +19,24 @@ class TrackersView extends StatelessWidget {
   final DbRepository dbRepository;
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
+  final PushRepository pushRepository;
 
   final int currentBar;
   final MainBloc mainBloc;
 
-  TrackersView(this.dbRepository, this.purchaseRepository,
-      this.serverRepository, this.currentBar, this.mainBloc);
+  TrackersView(
+      this.dbRepository,
+      this.purchaseRepository,
+      this.serverRepository,
+      this.pushRepository,
+      this.currentBar,
+      this.mainBloc);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TrackersBloc>(
-        create: (_) =>
-            TrackersBloc(dbRepository, purchaseRepository, serverRepository),
+        create: (_) => TrackersBloc(
+            dbRepository, purchaseRepository, serverRepository, pushRepository),
         child:
             BlocBuilder<TrackersBloc, TrackersState>(builder: (context, state) {
           // Settings
@@ -65,7 +72,8 @@ class TrackersView extends StatelessWidget {
     Navigator.of(context)
         .push(SearchPage.route(
             RepositoryProvider.of<PurchaseRepository>(context),
-            RepositoryProvider.of<ServerRepository>(context)))
+            RepositoryProvider.of<ServerRepository>(context),
+            RepositoryProvider.of<PushRepository>(context)))
         .then((searchResult) {
       if (searchResult != null) {
         if (searchResult.error != null) {
@@ -81,9 +89,8 @@ class TrackersView extends StatelessWidget {
               ),
             ));
           } else if (searchResult.error == "max_limit_reached") {
-            scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text(
-                    "Sorry, max trackers limit reached!")));
+            scaffoldKey.currentState.showSnackBar(
+                SnackBar(content: Text("Sorry, max trackers limit reached!")));
           } else if (searchResult.error == "already_added") {
             scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: Text(
