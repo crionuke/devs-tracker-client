@@ -17,6 +17,16 @@ class PushRepository {
   Stream<PushRepositoryStatus> get status async* {
     yield PushRepositoryStatus.loading;
     await requestPermission();
+    await handleInitialMessage();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage remoteMessage) {
+      print("Got remote message: $remoteMessage");
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage remoteMessage) {
+      print("Got message opened app: $remoteMessage");
+    });
+
     _deviceToken = await requestDeviceToken();
     print("DeviceToken=$_deviceToken");
     yield PushRepositoryStatus.loaded;
@@ -25,6 +35,14 @@ class PushRepository {
   void dispose() => controller.close();
 
   String getDeviceToken() => _deviceToken;
+
+  Future<void> handleInitialMessage() async {
+    await messaging.getInitialMessage().then((remoteMessage) {
+      if (remoteMessage != null) {
+        print("Started with remote message: $remoteMessage");
+      }
+    });
+  }
 
   Future<void> requestPermission() async {
     NotificationSettings settings = await messaging.requestPermission(
