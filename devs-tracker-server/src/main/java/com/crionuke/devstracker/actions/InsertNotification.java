@@ -37,7 +37,7 @@ public class InsertNotification {
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
                 throw new NotificationAlreadyAddedException("Notification already added, developerId=" +
-                        developerId + ", appTitle=" + appTitle, e);
+                        developerId + ", appTitle=\"" + appTitle + "\"", e);
             } else {
                 throw new InternalServerException("Transaction failed, " + e.getMessage(), e);
             }

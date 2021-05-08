@@ -67,7 +67,7 @@ public class Checker {
                                     InsertNotification insertNotification =
                                             new InsertNotification(connection, developer.getId(), searchApp.getTitle());
                                     logger.info("New released app detected, " +
-                                                    "releaseDate={} > developerAdded={}, inserted notification={}",
+                                                    "releaseDate=\"{}\" > developerAdded=\"{}\", inserted notification={}",
                                             searchApp.getReleaseDate(), developer.getAdded(),
                                             insertNotification.getNotification());
                                 } catch (NotificationAlreadyAddedException e) {

@@ -17,7 +17,7 @@ public class SelectCheckForUpdate {
             "FROM checks INNER JOIN developers ON c_developer_id = d_id " +
             "ORDER BY c_last_check, c_priority ASC " +
             "LIMIT 1 " +
-            "FOR UPDATE OF checks SKIP LOCKED";
+            "FOR UPDATE OF checks, developers SKIP LOCKED";
 
     private final CheckForUpdate checkForUpdate;
 

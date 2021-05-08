@@ -48,7 +48,7 @@ public class Notification {
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
-                "added=" + added + ", " +
+                "added=\"" + added + "\", " +
                 "developerId=" + developerId + ", " +
                 "appTitle=\"" + appTitle + "\", " +
                 "processed=\"" + processed + "\", " +
