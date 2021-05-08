@@ -27,7 +27,7 @@ public class InsertUser {
                     long id = generatedKeys.getLong("u_id");
                     Timestamp added = generatedKeys.getTimestamp("u_added");
                     user = new User(id, added, token, device);
-                    logger.info("User added, {}", user);
+                    logger.info("User added, user={}", user);
                 } else {
                     throw new InternalServerException("Generated key not found");
                 }

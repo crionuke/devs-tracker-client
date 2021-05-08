@@ -1,4 +1,4 @@
 #!/bin/bash
 
 docker-compose kill
-rm -rf dev-tracker-db
+rm -rf devs-tracker-db

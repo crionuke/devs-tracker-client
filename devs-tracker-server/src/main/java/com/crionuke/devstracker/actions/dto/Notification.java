@@ -6,14 +6,17 @@ public class Notification {
 
     private final long id;
     private final Timestamp added;
-    private final long appId;
+    private final long developerId;
+    private final String appTitle;
     private final boolean processed;
     private final Timestamp updated;
 
-    public Notification(long id, Timestamp added, long appId, boolean processed, Timestamp updated) {
+    public Notification(long id, Timestamp added, long developerId, String appTitle, boolean processed,
+                        Timestamp updated) {
         this.id = id;
         this.added = added;
-        this.appId = appId;
+        this.developerId = developerId;
+        this.appTitle = appTitle;
         this.processed = processed;
         this.updated = updated;
     }
@@ -26,8 +29,12 @@ public class Notification {
         return added;
     }
 
-    public long getAppId() {
-        return appId;
+    public long getDeveloperId() {
+        return developerId;
+    }
+
+    public String getAppTitle() {
+        return appTitle;
     }
 
     public boolean isProcessed() {
@@ -42,7 +49,8 @@ public class Notification {
     public String toString() {
         return getClass().getSimpleName() + "(id=" + id + ", " +
                 "added=" + added + ", " +
-                "appId=" + appId + ", " +
+                "developerId=" + developerId + ", " +
+                "appTitle=\"" + appTitle + "\", " +
                 "processed=\"" + processed + "\", " +
                 "updated=\"" + updated + "\")";
     }

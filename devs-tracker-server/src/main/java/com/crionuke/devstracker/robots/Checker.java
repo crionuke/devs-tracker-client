@@ -31,7 +31,7 @@ public class Checker {
     }
 
     @Scheduled(fixedRate = 6000)
-    public void check() {
+    public void run() {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
             try {
@@ -49,7 +49,8 @@ public class Checker {
                                         result.getTrackViewUrl(), result.getReleaseDate()))
                         .collectList()
                         .block();
-                logger.debug("Lookup developer, developerId={}, {}", developer.getId(), apps);
+                logger.debug("Lookup developer, developerId={}, appsCount={}, apps={}",
+                        developer.getId(), apps.size(), apps);
                 for (SearchApp searchApp : apps) {
                     App app;
                     try {
@@ -64,11 +65,11 @@ public class Checker {
                                 // Safe notification
                                 try {
                                     InsertNotification insertNotification =
-                                            new InsertNotification(connection, insertApp.getApp().getId());
+                                            new InsertNotification(connection, developer.getId(), searchApp.getTitle());
                                     logger.info("New released app detected, " +
-                                                    "releaseDate={} > lastCheck={}, notificationId={}",
+                                                    "releaseDate={} > developerAdded={}, inserted notification={}",
                                             searchApp.getReleaseDate(), developer.getAdded(),
-                                            insertNotification.getNotification().getId());
+                                            insertNotification.getNotification());
                                 } catch (NotificationAlreadyAddedException e) {
                                     logger.info(e.getMessage(), e);
                                 }
@@ -93,6 +94,7 @@ public class Checker {
                 UpdateCheck updateCheck = new UpdateCheck(connection, checkForUpdate.getId());
                 connection.commit();
             } catch (CheckForUpdateNotFoundException e) {
+                logger.debug(e.getMessage());
                 rollbackNoException(connection);
             } catch (InternalServerException e) {
                 logger.warn(e.getMessage(), e);

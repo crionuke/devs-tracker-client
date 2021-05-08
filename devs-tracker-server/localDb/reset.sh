@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ./kill.sh
-rm -rf dev-tracker-db
+rm -rf devs-tracker-db
 sleep 2
 ./up.sh
-docker logs dev-tracker-db
+docker logs devs-tracker-db

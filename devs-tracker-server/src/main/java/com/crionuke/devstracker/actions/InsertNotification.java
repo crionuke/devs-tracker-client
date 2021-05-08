@@ -11,15 +11,16 @@ import java.sql.*;
 public class InsertNotification {
     private static final Logger logger = LoggerFactory.getLogger(InsertNotification.class);
 
-    private final String INSERT_SQL = "INSERT INTO notifications (n_app_id) VALUES(?)";
+    private final String INSERT_SQL = "INSERT INTO notifications (n_developer_id, n_app_title) VALUES(?, ?)";
 
     private final Notification notification;
 
-    public InsertNotification(Connection connection, long appId)
+    public InsertNotification(Connection connection, long developerId, String appTitle)
             throws NotificationAlreadyAddedException, InternalServerException {
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
-            statement.setLong(1, appId);
+            statement.setLong(1, developerId);
+            statement.setString(2, appTitle);
             statement.execute();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -27,7 +28,7 @@ public class InsertNotification {
                     Timestamp added = generatedKeys.getTimestamp("n_added");
                     boolean processed = generatedKeys.getBoolean("n_processed");
                     Timestamp updated = generatedKeys.getTimestamp("n_updated");
-                    notification = new Notification(id, added, appId, processed, updated);
+                    notification = new Notification(id, added, developerId, appTitle, processed, updated);
                     logger.debug("Notification added, {}", notification);
                 } else {
                     throw new InternalServerException("Generated key not found");
@@ -35,7 +36,8 @@ public class InsertNotification {
             }
         } catch (SQLException e) {
             if (e.getSQLState().equals("23505")) {
-                throw new NotificationAlreadyAddedException("Notification already added, appId=" + appId, e);
+                throw new NotificationAlreadyAddedException("Notification already added, developerId=" +
+                        developerId + ", appTitle=" + appTitle, e);
             } else {
                 throw new InternalServerException("Transaction failed, " + e.getMessage(), e);
             }
