@@ -1,7 +1,6 @@
 package com.crionuke.devstracker.actions;
 
 import com.crionuke.devstracker.actions.dto.Check;
-import com.crionuke.devstracker.actions.dto.CheckForUpdate;
 import com.crionuke.devstracker.actions.dto.Developer;
 import com.crionuke.devstracker.exceptions.CheckForUpdateNotFoundException;
 import com.crionuke.devstracker.exceptions.InternalServerException;
@@ -18,7 +17,7 @@ public class SelectCheckForUpdate {
             "FROM checks INNER JOIN developers ON c_developer_id = d_id " +
             "ORDER BY c_last_check ASC " +
             "LIMIT 1 " +
-            "FOR UPDATE OF checks, developers SKIP LOCKED";
+            "FOR UPDATE OF checks SKIP LOCKED";
 
     private final Check check;
     private final Developer developer;

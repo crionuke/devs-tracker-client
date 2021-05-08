@@ -61,8 +61,8 @@ public class Checker {
                             if (searchApp.getReleaseDate().getTime() > developer.getAdded().getTime()) {
                                 // Safe notification
                                 try {
-                                    InsertNotification insertNotification =
-                                            new InsertNotification(connection, developer.getId(), searchApp.getTitle());
+                                    InsertNotification insertNotification = new InsertNotification(connection,
+                                            developer.getId(), searchApp.getAppleId(), searchApp.getTitle());
                                     logger.info("New released app detected, " +
                                                     "releaseDate=\"{}\" > developerAdded=\"{}\", inserted notification={}",
                                             searchApp.getReleaseDate(), developer.getAdded(),
