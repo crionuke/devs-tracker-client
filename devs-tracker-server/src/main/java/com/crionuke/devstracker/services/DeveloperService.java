@@ -45,7 +45,7 @@ public class DeveloperService {
                 .block();
         // Cache results
         developers.stream().forEach(searchDeveloper -> searchCache.put(searchDeveloper.getAppleId(), searchDeveloper));
-        logger.debug("Got response from Apple SearchAPI, term={}, {}", term, developers);
+        logger.debug("Got response from Apple SearchAPI, term=\"{}\", {}", term, developers);
         return developers;
     }
 
