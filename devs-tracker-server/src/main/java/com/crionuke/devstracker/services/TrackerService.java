@@ -9,6 +9,7 @@ import com.crionuke.devstracker.api.firebase.FirebaseApi;
 import com.crionuke.devstracker.api.revenueCat.RevenueCatApi;
 import com.crionuke.devstracker.api.revenueCat.dto.RevenueCatResponse;
 import com.crionuke.devstracker.exceptions.*;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +79,11 @@ public class TrackerService {
                 Developer developer = developerService.selectOrAddDeveloperFromCache(connection, developerAppleId);
                 InsertTracker insertTracker = new InsertTracker(connection, user.getId(), developer.getId());
                 Tracker tracker = insertTracker.getTracker();
+                try {
+                    firebaseApi.subscribeDeviceToAppleDeveloper(user.getDevice(), developerAppleId);
+                } catch (FirebaseMessagingException e) {
+                    throw new InternalServerException("subscribe to topic failed", e);
+                }
                 // Commit
                 connection.commit();
             } catch (FreeTrackersLimitReachedException | DeveloperNotCachedException |
@@ -99,6 +105,11 @@ public class TrackerService {
                 SelectDeveloper selectDeveloper = new SelectDeveloper(connection, developerAppleId);
                 Developer developer = selectDeveloper.getDeveloper();
                 DeleteTracker deleteTracker = new DeleteTracker(connection, user.getId(), developer.getId());
+                try {
+                    firebaseApi.unsubscribeDeviceFromAppleDeveloper(user.getDevice(), developerAppleId);
+                } catch (FirebaseMessagingException e) {
+                    throw new InternalServerException("unsubscribe from topic failed", e);
+                }
                 // Commit
                 connection.commit();
             } catch (DeveloperNotFoundException | InternalServerException e) {
