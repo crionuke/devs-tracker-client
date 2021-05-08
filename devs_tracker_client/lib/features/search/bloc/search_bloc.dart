@@ -79,12 +79,17 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
           .then((_) =>
               SearchState.finished(SearchResult.found(event.searchDeveloper)))
           .catchError((error) {
-        if (error is DioError) {
+        if (error is DioError &&
+            error.response != null &&
+            error.response.data is Map) {
+          print("DioError: " + error.response.toString());
           return SearchState.finished(SearchResult.failed(event.searchDeveloper,
               ErrorResponse.fromJson(error.response.data).id));
         } else {
-          return SearchState.failed();
+          print("Error: " + error.toString());
         }
+
+        return SearchState.failed();
       });
     }
   }
