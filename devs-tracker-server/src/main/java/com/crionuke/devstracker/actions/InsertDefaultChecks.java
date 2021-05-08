@@ -14,16 +14,14 @@ public class InsertDefaultChecks {
     private final String[] COUNTRIES = {"ru", "us"};
 
     private final String INSERT_SQL = "INSERT INTO checks " +
-            "(c_developer_id, c_country, c_priority) VALUES(?, ?, ?)";
+            "(c_developer_id, c_country) VALUES(?, ?)";
 
     public InsertDefaultChecks(Connection connection, long developerId) throws InternalServerException {
         try (PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setLong(1, developerId);
-            int priority = 0;
             for (String country : COUNTRIES) {
                 statement.setString(2, country);
-                statement.setInt(3, priority++);
                 statement.addBatch();
             }
             statement.executeBatch();

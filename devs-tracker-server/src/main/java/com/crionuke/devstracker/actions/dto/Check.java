@@ -8,15 +8,13 @@ public class Check {
     final Timestamp added;
     final long developerId;
     final String country;
-    final int priority;
     final Timestamp lastCheck;
 
-    public Check(long id, Timestamp added, long developerId, String country, int priority, Timestamp lastCheck) {
+    public Check(long id, Timestamp added, long developerId, String country, Timestamp lastCheck) {
         this.id = id;
         this.added = added;
         this.developerId = developerId;
         this.country = country;
-        this.priority = priority;
         this.lastCheck = lastCheck;
     }
 
@@ -36,10 +34,6 @@ public class Check {
         return country;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
     public Timestamp getLastCheck() {
         return lastCheck;
     }
@@ -50,7 +44,6 @@ public class Check {
                 "added=\"" + added + "\", " +
                 "developerId=" + developerId + ", " +
                 "country=\"" + country + "\", " +
-                "priority=" + priority + ", " +
                 "lastCheck=\"" + lastCheck + "\")";
     }
 }

@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS devstracker.checks (
     c_added TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     c_developer_id BIGINT NOT NULL,
     c_country VARCHAR(2) NOT NULL,
-    c_priority SMALLINT NOT NULL,
     c_last_check TIMESTAMPTZ NOT NULL DEFAULT TIMESTAMPTZ 'epoch',
     UNIQUE(c_developer_id, c_country)
 );

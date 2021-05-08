@@ -1,10 +1,7 @@
 package com.crionuke.devstracker.robots;
 
 import com.crionuke.devstracker.actions.*;
-import com.crionuke.devstracker.actions.dto.App;
-import com.crionuke.devstracker.actions.dto.CheckForUpdate;
-import com.crionuke.devstracker.actions.dto.Developer;
-import com.crionuke.devstracker.actions.dto.SearchApp;
+import com.crionuke.devstracker.actions.dto.*;
 import com.crionuke.devstracker.api.apple.AppleApi;
 import com.crionuke.devstracker.exceptions.*;
 import org.slf4j.Logger;
@@ -36,12 +33,12 @@ public class Checker {
             connection.setAutoCommit(false);
             try {
                 SelectCheckForUpdate selectCheckForUpdate = new SelectCheckForUpdate(connection);
-                CheckForUpdate checkForUpdate = selectCheckForUpdate.getCheckForUpdate();
-                logger.debug("Handle {}", checkForUpdate);
-                Developer developer = checkForUpdate.getDeveloper();
+                Check check = selectCheckForUpdate.getCheck();
+                Developer developer = selectCheckForUpdate.getDeveloper();
+                logger.debug("Handle check={}, developer={}", check, developer);
                 // Lookup developer for apps
                 List<SearchApp> apps = appleApi
-                        .lookupDeveloper(developer.getAppleId(), checkForUpdate.getCountry())
+                        .lookupDeveloper(developer.getAppleId(), check.getCountry())
                         .flatMapMany(response -> Flux.fromIterable(response.getResults()))
                         .filter(result -> result.getWrapperType().equals("software"))
                         .map(result ->
@@ -81,17 +78,17 @@ public class Checker {
                     }
                     // Link app with country
                     try {
-                        SelectLink selectLink = new SelectLink(connection, app.getId(), checkForUpdate.getCountry());
+                        SelectLink selectLink = new SelectLink(connection, app.getId(), check.getCountry());
                     } catch (LinkNotFoundException e1) {
                         try {
                             InsertLink insertLink = new InsertLink(connection, app.getId(), searchApp.getTitle(),
-                                    checkForUpdate.getCountry(), searchApp.getUrl());
+                                    check.getCountry(), searchApp.getUrl());
                         } catch (LinkAlreadyAddedException e2) {
                             logger.debug(e2.getMessage());
                         }
                     }
                 }
-                UpdateCheck updateCheck = new UpdateCheck(connection, checkForUpdate.getId());
+                UpdateCheck updateCheck = new UpdateCheck(connection, check.getId());
                 connection.commit();
             } catch (CheckForUpdateNotFoundException e) {
                 logger.debug(e.getMessage());
