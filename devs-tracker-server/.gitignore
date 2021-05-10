@@ -1,5 +1,5 @@
 .idea
 target/
-firebase/
+env/
 localdb/devs-tracker-db
 *.iml

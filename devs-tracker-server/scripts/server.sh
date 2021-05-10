@@ -11,4 +11,3 @@ sudo chown devstracker:devstracker /home/devstracker/.ssh
 chmod 700 /home/devstracker/.ssh
 cp /root/.ssh/authorized_keys /home/devstracker/.ssh/
 sudo chown devstracker:devstracker /home/devstracker/.ssh/authorized_keys
-echo Finished
