@@ -30,6 +30,6 @@ abstract class ApiProvider {
     device.runes.forEach((int rune) {
       result += rune + len2;
     });
-    return result;
+    return result * result;
   }
 }
