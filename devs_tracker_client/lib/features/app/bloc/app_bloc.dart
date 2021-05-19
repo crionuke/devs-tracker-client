@@ -1,4 +1,6 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
+import 'package:devs_tracker_client/repositories/server_repository/providers/model/app_link.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
@@ -11,22 +13,34 @@ class ReloadEvent extends AppEvent {
   ReloadEvent();
 }
 
-abstract class AppState {
-  TrackedDeveloper trackedDeveloper;
-  DeveloperApp developerApp;
+class AppState {
+  final bool loaded;
+  final bool failed;
+  final bool deleted;
+  final TrackedDeveloper trackedDeveloper;
+  final DeveloperApp developerApp;
+  final List<AppLink> appLinks;
 
-  AppState(this.trackedDeveloper, this.developerApp);
-}
+  AppState.loading()
+      : loaded = false,
+        failed = false,
+        deleted = false,
+        trackedDeveloper = null,
+        developerApp = null,
+        appLinks = null;
 
-class LoadingState extends AppState {
-  LoadingState(TrackedDeveloper trackedDeveloper, DeveloperApp developerApp)
-      : super(trackedDeveloper, developerApp);
-}
+  AppState.loaded(this.trackedDeveloper, this.developerApp, this.appLinks)
+      : loaded = true,
+        failed = false,
+        deleted = false;
 
-class AppPageState extends AppState {
-
-  AppPageState(TrackedDeveloper trackedDeveloper, DeveloperApp developerApp)
-      : super(trackedDeveloper, developerApp);
+  AppState.failed()
+      : loaded = true,
+        failed = true,
+        deleted = false,
+        trackedDeveloper = null,
+        developerApp = null,
+        appLinks = null;
 }
 
 class AppBloc extends Bloc<AppEvent, AppState> {
@@ -34,17 +48,29 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   final DeveloperApp developerApp;
   final PurchaseRepository purchaseRepository;
   final ServerRepository serverRepository;
+  final PushRepository pushRepository;
 
   AppBloc(this.trackedDeveloper, this.developerApp, this.purchaseRepository,
-      this.serverRepository)
-      : super(LoadingState(trackedDeveloper, developerApp)) {
+      this.serverRepository, this.pushRepository)
+      : super(AppState.loading()) {
     Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
     if (event is ReloadEvent) {
-      yield AppPageState(trackedDeveloper, developerApp);
+      yield AppState.loading();
+      yield await serverRepository.appProvider
+          .getLinks(purchaseRepository.getUserID(),
+          pushRepository.getDeviceToken(), developerApp.appleId)
+          .then((response) {
+        print("Links loaded, $response");
+        List<AppLink> appLinks = response.links;
+        return AppState.loaded(trackedDeveloper, developerApp, appLinks);
+      }).catchError((error) {
+        print("Error: " + error.toString());
+        return AppState.failed();
+      });
     }
   }
 

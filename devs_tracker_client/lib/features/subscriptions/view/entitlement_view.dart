@@ -1,3 +1,4 @@
+import 'package:devs_tracker_client/widgets/liquid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -16,10 +17,10 @@ class EntitlementView extends StatelessWidget {
     String latestPurchaseDate = _formatDate(
         context, DateTime.parse(entitlementInfo.latestPurchaseDate));
 
-    return ListTile(
+    return LiquidView(child: ListTile(
         title: Text("Subscribed: $originalDate"),
         subtitle: Text(
-            "Latest purchase: $latestPurchaseDate, expiration: $expirationDate"));
+            "Latest purchase: $latestPurchaseDate, expiration: $expirationDate")));
   }
 
   static String _formatDate(BuildContext context, DateTime dateTime) {

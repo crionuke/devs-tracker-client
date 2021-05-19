@@ -8,16 +8,16 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LiquidView(child: Center(
+    return LiquidView(
+        child: Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text("Sorry, something failed."),
-      Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child:
-          FlatButton(
-          onPressed: onPressed,
-          child: Text("Try again"),
-        ))
+        Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: FlatButton(
+              onPressed: onPressed,
+              child: Text("Try again"),
+            ))
       ]),
     ));
   }

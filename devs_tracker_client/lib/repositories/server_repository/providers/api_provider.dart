@@ -10,7 +10,7 @@ abstract class ApiProvider {
     return RequestOptions(
         baseUrl: baseUrl,
         connectTimeout: 5000,
-        receiveTimeout: 5000,
+        receiveTimeout: 10000,
         receiveDataWhenStatusError: true,
         validateStatus: (status) => status >= 200 && status < 300,
         headers: {

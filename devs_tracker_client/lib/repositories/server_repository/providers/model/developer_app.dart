@@ -1,39 +1,37 @@
-import 'package:devs_tracker_client/repositories/server_repository/providers/model/app_link.dart';
+import 'package:country_codes/country_codes.dart';
 
 class DeveloperApp {
   final int appleId;
   final DateTime releaseDate;
-  final Map<String, AppLink> links;
+  final Map<String, String> translations;
 
-  DeveloperApp(this.appleId, String releaseDateString, this.links)
-      :
-        releaseDate = DateTime.parse(releaseDateString);
+  DeveloperApp(this.appleId, String releaseDateString, this.translations)
+      : releaseDate = DateTime.parse(releaseDateString);
 
-  factory DeveloperApp.fromJson(Map <String, dynamic> json) {
-    Map<String, AppLink> links = Map();
-    (json["links"] as List)
-        .map((link) => AppLink.fromJson(link))
-        .forEach((link) => links[link.country] = link);
-
-    return DeveloperApp(
-        json["appleId"], json["releaseDate"], links);
+  factory DeveloperApp.fromJson(Map<String, dynamic> json) {
+    Map<String, String> translations = (json["translations"] as Map)
+        .map((country, title) => MapEntry<String, String>(country, title));
+    return DeveloperApp(json["appleId"], json["releaseDate"], translations);
   }
 
   @override
   String toString() {
-    return "(appleId=${appleId}, releaseDate=\"${releaseDate}\", links=${links})";
+    return "(appleId=${appleId}, releaseDate=\"${releaseDate}\", translations=${translations})";
   }
 
   String get title {
-    if (links.isEmpty) {
+    if (translations.isEmpty) {
       return "<Unknown>";
     } else {
-      if (links.containsKey("ru")) {
-        return links["ru"].title;
-      } else if (links.containsKey("us")) {
-        return links["us"].title;
+      String deviceCountryCode =
+          CountryCodes.getDeviceLocale().countryCode.toLowerCase();
+
+      if (translations.containsKey(deviceCountryCode)) {
+        return translations[deviceCountryCode];
+      } else if (translations.containsKey("us")) {
+        return translations["us"];
       } else {
-        return links.values.toList()[0].title;
+        return translations.values.toList()[0];
       }
     }
   }

@@ -1,9 +1,11 @@
 import 'package:devs_tracker_client/features/app/bloc/app_bloc.dart';
 import 'package:devs_tracker_client/features/app/view/app_view.dart';
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/developer_app.dart';
 import 'package:devs_tracker_client/repositories/server_repository/providers/model/tracked_developer.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
+import 'package:devs_tracker_client/widgets/error_view.dart';
 import 'package:devs_tracker_client/widgets/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,11 +15,12 @@ class AppPage extends StatelessWidget {
       TrackedDeveloper trackedDeveloper,
       DeveloperApp developerApp,
       PurchaseRepository purchaseRepository,
-      ServerRepository serverRepository) {
+      ServerRepository serverRepository,
+      PushRepository pushRepository) {
     return MaterialPageRoute<void>(
         builder: (_) => BlocProvider<AppBloc>(
             create: (_) => AppBloc(trackedDeveloper, developerApp,
-                purchaseRepository, serverRepository),
+                purchaseRepository, serverRepository, pushRepository),
             child: AppPage()));
   }
 
@@ -34,9 +37,12 @@ class AppPage extends StatelessWidget {
           ),
           body: BlocBuilder<AppBloc, AppState>(
             builder: (context, state) {
-              if (state is AppPageState) {
-                return AppView(state.developerApp,
-                    state.developerApp.links.values.toList());
+              if (state.loaded) {
+                if (state.failed) {
+                  return ErrorView(() => context.read<AppBloc>().reload());
+                } else {
+                  return AppView(state.developerApp, state.appLinks);
+                }
               } else {
                 return LoadingView();
               }

@@ -49,8 +49,7 @@ class SubscriptionsState {
         entitlementInfo = null;
 }
 
-class SubscriptionsBloc
-    extends Bloc<SubscriptionsEvent, SubscriptionsState> {
+class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   final PurchaseRepository purchaseRepository;
 
   SubscriptionsBloc(this.purchaseRepository)
@@ -63,19 +62,22 @@ class SubscriptionsBloc
     // Reload
     if (event is ReloadEvent) {
       yield SubscriptionsState.loading();
-      yield await purchaseRepository.getPurchaserInfo().then((
-          purchaserInfo) async {
-        if (purchaserInfo.entitlements.all["Access"].isActive) {
+      yield await purchaseRepository
+          .getPurchaserInfo()
+          .then((purchaserInfo) async {
+        if (purchaserInfo.entitlements.all["Access"] != null &&
+            purchaserInfo.entitlements.all["Access"].isActive) {
           print("Found active entitlements, $purchaserInfo");
           return SubscriptionsState.active(
               entitlementInfo: purchaserInfo.entitlements.all["Access"],
               snackText: event.snackText);
         } else {
-          return await purchaseRepository.getCurrentOfferings()
+          return await purchaseRepository
+              .getCurrentOfferings()
               .then((offering) {
             print("Offering loaded, $offering");
-            return SubscriptionsState.offering(offering: offering,
-                snackText: event.snackText);
+            return SubscriptionsState.offering(
+                offering: offering, snackText: event.snackText);
           }).catchError((error) {
             print("Error: " + error.toString());
             return SubscriptionsState.failed(snackText: event.snackText);

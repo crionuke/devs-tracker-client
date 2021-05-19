@@ -8,6 +8,7 @@ import 'package:devs_tracker_client/repositories/purchase_repository/purchase_re
 import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:devs_tracker_client/widgets/error_view.dart';
+import 'package:devs_tracker_client/widgets/liquid_view.dart';
 import 'package:devs_tracker_client/widgets/loading_view.dart';
 import 'package:devs_tracker_client/widgets/main_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class TrackersView extends StatelessWidget {
                   return TrackersList(state.data);
                 }
               } else {
-                return LoadingView();
+                return LiquidView(child: LoadingView());
               }
             }),
             bottomNavigationBar: MainBottomNavigationBar(currentBar, mainBloc),

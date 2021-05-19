@@ -34,6 +34,13 @@ class App extends StatelessWidget {
         ],
         child: MaterialApp(
           theme: ThemeData(
+            primaryColor: Colors.black,
+            accentColor: Colors.black,
+            appBarTheme: AppBarTheme(
+                backwardsCompatibility: false,
+                color: Colors.white,
+                titleTextStyle: TextStyle(color: Colors.black, fontSize: 21),
+                iconTheme: IconThemeData(color: Colors.black)),
             cardTheme: CardTheme(
                 shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
