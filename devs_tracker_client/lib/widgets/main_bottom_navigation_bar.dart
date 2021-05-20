@@ -24,6 +24,7 @@ class MainBottomNavigationBar extends StatelessWidget {
       ],
       currentIndex: currentIndex,
       onTap: (barIndex) => mainBloc.selectBar(barIndex),
+      selectedItemColor: Colors.black,
     );
   }
 }

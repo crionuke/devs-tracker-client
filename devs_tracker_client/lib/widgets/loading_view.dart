@@ -6,7 +6,7 @@ class LoadingView extends StatelessWidget {
   Widget build(BuildContext context) {
     return LiquidView(
         child: Center(
-      child: CircularProgressIndicator(),
+      child: CircularProgressIndicator(color: Colors.black,),
     ));
   }
 }
