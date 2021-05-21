@@ -26,25 +26,32 @@ class SettingsView extends StatelessWidget {
           ),
           body: BlocBuilder<SettingsBloc, SettingsState>(
               builder: (context, state) {
-                if (state.loaded) {
-                  return LiquidView(child: Column(
-                      children: [
-                        ListTile(
-                            title: Text("Subscriptions"),
-                            trailing: Icon(Icons.navigate_next),
-                            onTap: () =>
-                                Navigator.of(context).push(
-                                    SubscriptionsPage.route(
-                                        purchaseRepository))),
-                        ListTile(title: Text("Version"),
-                            subtitle: Text(state.data.version))
-                      ]));
-                } else {
-                  return LoadingView();
-                } // Settings
-              }),
+            if (state.loaded) {
+              return LiquidView(
+                  child: Column(children: [
+                ListTile(
+                    title: Text("Subscriptions"),
+                    trailing: Icon(Icons.navigate_next),
+                    onTap: () => Navigator.of(context)
+                        .push(SubscriptionsPage.route(purchaseRepository))),
+                ListTile(
+                    title: Text("Privacy policy"),
+                    trailing: Icon(Icons.navigate_next),
+                    onTap: () =>
+                        context.read<SettingsBloc>().openPrivacyPolicy()),
+                ListTile(
+                    title: Text("Terms & Conditions"),
+                    trailing: Icon(Icons.navigate_next),
+                    onTap: () =>
+                        context.read<SettingsBloc>().openTermsAndConditions()),
+                ListTile(
+                    title: Text("Version"), subtitle: Text(state.data.version))
+              ]));
+            } else {
+              return LoadingView();
+            } // Settings
+          }),
           bottomNavigationBar: MainBottomNavigationBar(currentBar, mainBloc),
-        )
-    );
+        ));
   }
 }

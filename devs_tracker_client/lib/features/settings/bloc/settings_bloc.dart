@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 abstract class SettingsEvent {}
 
@@ -41,5 +42,17 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
 
   void reload() {
     add(ReloadEvent());
+  }
+
+  void openPrivacyPolicy() {
+    String privacyPolicyUrl = "https://devstracker.blogspot.com/2021/05/privacy-policy.html";
+    print("Open url, $privacyPolicyUrl");
+    launch(privacyPolicyUrl);
+  }
+
+  void openTermsAndConditions() {
+    String termsAndConditionsUrl = "https://devstracker.blogspot.com/2021/05/terms-conditions.html";
+    print("Open url, $termsAndConditionsUrl");
+    launch(termsAndConditionsUrl);
   }
 }
