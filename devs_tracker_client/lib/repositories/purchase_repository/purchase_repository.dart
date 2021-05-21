@@ -67,5 +67,9 @@ class PurchaseRepository {
     });
   }
 
+  Future<PurchaserInfo> restore() async {
+    return await Purchases.restoreTransactions();
+  }
+
   void dispose() => controller.close();
 }

@@ -83,6 +83,7 @@ class TrackersView extends StatelessWidget {
               content: Text("Free trackers limit reached!"),
               action: SnackBarAction(
                 label: "Subscribe!",
+                textColor: Colors.white,
                 onPressed: () {
                   Navigator.of(context)
                       .push(SubscriptionsPage.route(purchaseRepository));

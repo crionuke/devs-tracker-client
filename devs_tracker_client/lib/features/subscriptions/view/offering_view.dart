@@ -50,15 +50,17 @@ class OfferingView extends StatelessWidget {
                     ),
                   ],
                 ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: FlatButton(
-                        onPressed: () {
-                          context
-                              .read<SubscriptionsBloc>()
-                              .purchase(state.package);
-                        },
-                        child: Text("Continue")))
+                FlatButton(
+                    onPressed: () {
+                      context.read<SubscriptionsBloc>().purchase(state.package);
+                    },
+                    child: Text("Continue")),
+                Text("or"),
+                FlatButton(
+                    onPressed: () {
+                      context.read<SubscriptionsBloc>().restore();
+                    },
+                    child: Text("Restore purchase"))
               ]));
         }));
   }

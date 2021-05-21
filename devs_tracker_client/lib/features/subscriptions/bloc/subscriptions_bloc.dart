@@ -10,6 +10,10 @@ class ReloadEvent extends SubscriptionsEvent {
   ReloadEvent({this.snackText});
 }
 
+class RestoreEvent extends SubscriptionsEvent {
+  RestoreEvent();
+}
+
 class PurchaseEvent extends SubscriptionsEvent {
   final Package package;
 
@@ -107,6 +111,20 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
         print("Error: " + error.toString());
         reload(snackText: "Unknown error, try again!");
       });
+    } else if (event is RestoreEvent) {
+      yield SubscriptionsState.loading();
+      await purchaseRepository.restore().then((purchaserInfo) {
+        print("Restore finished, $purchaserInfo");
+        if (purchaserInfo.entitlements.all["Access"] != null &&
+            purchaserInfo.entitlements.all["Access"].isActive) {
+          reload(snackText: "Purchases restored!");
+        } else {
+          reload(snackText: "No active subscriptions found!");
+        }
+      }).catchError((error) {
+        print("Error: " + error.toString());
+        reload(snackText: "Unknown error, try again!");
+      });
     }
   }
 
@@ -116,5 +134,9 @@ class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
 
   void purchase(Package package) {
     add(PurchaseEvent(package));
+  }
+
+  void restore() {
+    add(RestoreEvent());
   }
 }
