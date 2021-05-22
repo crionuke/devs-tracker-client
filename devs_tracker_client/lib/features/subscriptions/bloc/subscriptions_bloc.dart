@@ -1,4 +1,6 @@
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
+import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
+import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -56,7 +58,8 @@ class SubscriptionsState {
 class SubscriptionsBloc extends Bloc<SubscriptionsEvent, SubscriptionsState> {
   final PurchaseRepository purchaseRepository;
 
-  SubscriptionsBloc(this.purchaseRepository)
+  SubscriptionsBloc(
+      this.purchaseRepository)
       : super(SubscriptionsState.loading()) {
     Future.delayed(Duration(milliseconds: 500)).whenComplete(() => reload());
   }

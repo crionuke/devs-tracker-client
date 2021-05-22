@@ -16,7 +16,6 @@ class PushRepository {
 
   Stream<PushRepositoryStatus> get status async* {
     yield PushRepositoryStatus.loading;
-    await requestPermission();
     await handleInitialMessage();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage remoteMessage) {
@@ -45,15 +44,7 @@ class PushRepository {
   }
 
   Future<void> requestPermission() async {
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: true,
-      sound: true,
-    );
+    NotificationSettings settings = await messaging.requestPermission();
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       print("User granted permission");

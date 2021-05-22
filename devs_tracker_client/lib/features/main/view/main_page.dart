@@ -5,6 +5,9 @@ import 'package:devs_tracker_client/repositories/db_repository/db_repository.dar
 import 'package:devs_tracker_client/repositories/purchase_repository/purchase_repository.dart';
 import 'package:devs_tracker_client/repositories/push_repository/push_repository.dart';
 import 'package:devs_tracker_client/repositories/server_repository/server_repository.dart';
+import 'package:devs_tracker_client/widgets/error_view.dart';
+import 'package:devs_tracker_client/widgets/liquid_view.dart';
+import 'package:devs_tracker_client/widgets/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,7 +19,8 @@ class MainPage extends StatelessWidget {
       PushRepository pushRepository) {
     return MaterialPageRoute<void>(
         builder: (_) => BlocProvider<MainBloc>(
-            create: (_) => MainBloc(),
+            create: (_) =>
+                MainBloc(purchaseRepository, serverRepository, pushRepository),
             child: MainPage(dbRepository, purchaseRepository, serverRepository,
                 pushRepository)));
   }
@@ -32,20 +36,29 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainBloc, MainState>(builder: (context, state) {
-      return IndexedStack(
-        index: state.currentBar,
-        children: [
-          TrackersView(
-              dbRepository,
-              purchaseRepository,
-              serverRepository,
-              pushRepository,
-              state.currentBar,
-              context.select((MainBloc bloc) => bloc)),
-          SettingsView(purchaseRepository, state.currentBar,
-              context.select((MainBloc bloc) => bloc))
-        ],
-      );
+      if (state.loaded) {
+        if (state.failed) {
+          return Scaffold(
+              body: ErrorView(() => context.read<MainBloc>().reload()));
+        } else {
+          return IndexedStack(
+            index: state.currentBar,
+            children: [
+              TrackersView(
+                  dbRepository,
+                  purchaseRepository,
+                  serverRepository,
+                  pushRepository,
+                  state.currentBar,
+                  context.select((MainBloc bloc) => bloc)),
+              SettingsView(purchaseRepository, state.currentBar,
+                  context.select((MainBloc bloc) => bloc))
+            ],
+          );
+        }
+      } else {
+        return Scaffold(body: LiquidView(child: LoadingView()));
+      }
     });
   }
 }

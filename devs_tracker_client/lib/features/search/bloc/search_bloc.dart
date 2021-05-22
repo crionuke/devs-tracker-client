@@ -76,8 +76,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       yield await serverRepository.trackerProvider
           .post(purchaseRepository.getUserID(), pushRepository.getDeviceToken(),
               event.searchDeveloper.appleId)
-          .then((_) =>
-              SearchState.finished(SearchResult.found(event.searchDeveloper)))
+          .then((_) => pushRepository.requestPermission().then((value) =>
+              SearchState.finished(SearchResult.found(event.searchDeveloper))))
           .catchError((error) {
         if (error is DioError &&
             error.response != null &&

@@ -59,11 +59,9 @@ class TrackersBloc extends Bloc<TrackersEvent, TrackersState> {
         print("Trackers loaded, $response");
         List<TrackedDeveloper> developers = response.developers;
         developers.sort((d1, d2) => d2.added.compareTo(d1.added));
-        return dbRepository.getAllP().then((map) {
-          return TrackersState.loaded(developers
-              .map((developer) => DeveloperData(developer, developer.count))
-              .toList());
-        }).catchError((error) => TrackersState.failed());
+        return TrackersState.loaded(developers
+            .map((developer) => DeveloperData(developer, developer.count))
+            .toList());
       }).catchError((error) {
         print("Error: " + error.toString());
         return TrackersState.failed();
